@@ -1,64 +1,25 @@
+<!-- I want to save my game data in a svelte store so it is accessible from everywhere.
+
+I want to be able to call a function on a cell which influences its state. 
+-> So data (being clicked) is coming from cell_component which updates itself and the global state. Game component is subscribed to global state and then calls on every adjecent cell to update itself. -->
+
 <script lang="ts">
-	enum CellState {
-		Empty = 'E',
-		White = 'W',
-		Black = 'B'
-	}
+	import { Cell, CellState, Game } from '$lib/index';
+	import Cell_Component from '$lib/Cell.svelte';
+	import { game } from '$lib/stores';
 
-	class Game {
-		board: CellState[][];
-
-		constructor() {
-			this.board = [];
-			this.board.push(create_row(5));
-			this.board.push(create_row(6));
-			this.board.push(create_row(7));
-			this.board.push(create_row(8));
-			this.board.push(create_row(9));
-			this.board.push(create_row(8));
-			this.board.push(create_row(7));
-			this.board.push(create_row(6));
-			this.board.push(create_row(5));
-
-			function create_row(length: number): CellState[] {
-				const rowArray: CellState[] = [];
-				for (let col = 0; col < length; col++) {
-					rowArray.push(CellState.Empty);
-				}
-				return rowArray;
-			}
-
-			// testing purposes
-			this.board[0][0] = CellState.Black;
-			this.board[8][4] = CellState.White;
-		}
-	}
-
-	let game = new Game();
-
-	function background_of_cell(cell_state: CellState): String {
-		if (cell_state == CellState.White) {
-			return '';
-		}
-	}
+	// function main() {}
+	// main();
 </script>
 
-<div class="grid">
-	<!-- {#each game.board as row, rowIndex}
-		{#each row as cell, colIndex}
-			<div class="cell" style="grid-column: {colIndex + 1}; grid-row: {rowIndex + 1};">
-				<span>{cell}</span>
-			</div>
-		{/each}
-	{/each} -->
-	{#each game.board as row, rowIndex}
-		{#each row as cell, colIndex}
-			<div
-				class="h-16 w-16 rounded-full border-2 border-black"
-				style="grid-column: {colIndex + 1}; grid-row: {rowIndex + 1};"
-			>
-				<span>{cell}</span>
-			</div>
-		{/each}
+{@debug game}
+
+<div class="flex flex-col">
+	{#each $game.board as row, row_index}
+		<div class="flex justify-center">
+			{#each row as cell, col_index}
+				<Cell_Component cell_state={cell.state} row={row_index} col={col_index} />
+			{/each}
+		</div>
 	{/each}
 </div>
