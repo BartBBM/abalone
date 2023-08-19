@@ -46,12 +46,11 @@ export class Game {
 		}
 
 		switch (this.turn.get_turn_state()) {
-			case TurnState.no_cell_selected:
-				// before no cell was selected, now it is
-				if (pressed_cell.is_selected == false && this.turn.selected_cells == null)
-					throw new Error('Should not be possible');
-
-				if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
+			case TurnState.no_or_other_cell_selected:
+				// before no or an other cell was selected
+				if (pressed_cell == this.turn.selected_cells) {
+					this.turn.transition(TurnEvent.cell_deselected, null);
+				} else if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
 					this.mark_selectable_cells(row, col);
 					this.turn.transition(TurnEvent.own_cell_selected, pressed_cell);
 				} else {
@@ -92,17 +91,6 @@ export class Game {
 					} else {
 						this.turn.transition(TurnEvent.other_cell_selected, pressed_cell);
 					}
-				}
-				break;
-			case TurnState.other_cell_selected:
-				// before an other cell was selected
-				if (pressed_cell == this.turn.selected_cells) {
-					this.turn.transition(TurnEvent.cell_deselected, null);
-				} else if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
-					this.mark_selectable_cells(row, col);
-					this.turn.transition(TurnEvent.own_cell_selected, pressed_cell);
-				} else {
-					this.turn.transition(TurnEvent.other_cell_selected, pressed_cell);
 				}
 				break;
 			case TurnState.own_span_of_cells_selected:
