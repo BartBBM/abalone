@@ -5,6 +5,12 @@ export enum OwnColors {
 	Black = 'bg-teal-800'
 }
 
+export enum SpanLength {
+	One = 1,
+	Two,
+	Three
+}
+
 export enum CellState {
 	White = 'white',
 	Black = 'black',
@@ -62,8 +68,17 @@ export class Game {
 				if (pressed_cell == this.turn.selected_cells) {
 					this.turn.transition(TurnEvent.cell_deselected, null);
 				} else if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
-					if (this.is_span_selection_possible()) {
-						('asdfasdf');
+					let [is_possible, index, amount] = this.is_span_selection_possible(pressed_cell);
+					if (is_possible) {
+						let selected_cells = [
+							this.turn.selected_cells,
+							this.turn.selected_cells!.get_adjacents()[index]
+						];
+						if (amount == SpanLength.Three)
+							selected_cells.push(
+								this.turn.selected_cells!.get_adjacents()[index]!.get_adjacents()[index]
+							);
+						// TODO now rework selected cells to be of type array
 					} else {
 						this.mark_selectable_cells(row, col);
 						this.turn.transition(TurnEvent.own_cell_selected, pressed_cell);
@@ -288,8 +303,17 @@ export class Game {
 		return null;
 	}
 
-	is_span_selection_possible() {
-		return false;
+	is_span_selection_possible(cell: Cell): [boolean, number, SpanLength] {
+		let color = this.turn.selected_cells!.state;
+		this.turn.selected_cells!.get_adjacents().forEach((v, i) => {
+			if (v?.state == color) {
+				if (v == cell) return [true, i, SpanLength.Two];
+				if (v.get_adjacents()[i] != null && v.get_adjacents()[i] == cell)
+					return [true, i, SpanLength.Three];
+			}
+		});
+
+		return [false, -1, SpanLength.One];
 	}
 
 	remove_any_other_selected_cells(cells_not_to: [number, number][]) {
