@@ -1,3 +1,8 @@
+export enum Player {
+	White,
+	Black
+}
+
 export enum CellState {
 	Empty,
 	White,
