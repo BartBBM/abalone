@@ -14,10 +14,23 @@ export class Cell {
 	right: Cell | null = null;
 	bl: Cell | null = null;
 	br: Cell | null = null;
+
+	get_adjacents() {
+		return [this.tl, this.tr, this.left, this.right, this.bl, this.br];
+	}
+}
+
+// 'd be better to use a state machine
+export enum GameState {
+	no_cell_selected,
+	white_selected,
+	black_selected
 }
 
 export class Game {
 	board: Cell[][];
+	game_state: GameState = GameState.no_cell_selected;
+	latest_selected_cell: Cell | null = null;
 
 	constructor() {
 		// initialize cells
@@ -170,16 +183,14 @@ export class Game {
 			}
 		}
 	}
+	mark_all_cells_as_unselectable() {
+		this.board.flat().forEach((value) => (value.is_selectable = false));
+	}
 
 	mark_selectable_cells(row: number, col: number) {
-		// for (let i in this.board) {
-		// 	for (let j in this.board[i]) {
-		// 		if (!cells_not_to.some((cell) => cell[0] == parseInt(i) && cell[1] == parseInt(j)))
-		// 			this.board[i][j].is_selected = false;
-		// 	}
-		// }
-		this.board.flat().forEach((value) => (value.is_selectable = false));
+		this.mark_all_cells_as_unselectable();
 
+		// can be written more beautiful
 		if (this.board[row][col].tl) this.board[row][col].tl!.is_selectable = true;
 		if (this.board[row][col].tr) this.board[row][col].tr!.is_selectable = true;
 		if (this.board[row][col].left) this.board[row][col].left!.is_selectable = true;

@@ -1,8 +1,3 @@
-<!-- I want to save my game data in a svelte store so it is accessible from everywhere.
-
-I want to be able to call a function on a cell which influences its state. 
--> So data (being clicked) is coming from cell_component which updates itself and the global state. Game component is subscribed to global state and then calls on every adjecent cell to update itself. -->
-
 <script lang="ts">
 	import { Cell, CellState, Game } from '$lib/index';
 	import Cell_Component from '$lib/Cell.svelte';
