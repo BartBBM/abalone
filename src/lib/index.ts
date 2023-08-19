@@ -77,12 +77,11 @@ export class Game {
 							pressed_cell.state = this.turn.selected_cells.state;
 							this.turn.selected_cells.state = CellState.Empty;
 							pressed_cell.is_selected = !pressed_cell.is_selected;
-							this.turn.transition(TurnEvent.move_occured, null);
 
 							// toggel active player and next turn
 							this.turn.active_player =
 								this.turn.active_player == Player.White ? Player.Black : Player.White;
-							this.turn.transition(TurnEvent.turn_over, null);
+							this.turn.transition(TurnEvent.move_occured, null);
 						} else {
 							// move is illegal, display error, leave the rest
 							let [turn_row, turn_col] = this.get_indexes_of_cell(this.turn.selected_cells)!;
@@ -108,9 +107,6 @@ export class Game {
 				break;
 			case TurnState.own_span_of_cells_selected:
 				// this.own_span_of_cells_selected_handler(event);
-				break;
-			case TurnState.end_of_turn:
-				// this.end_of_turn_handler(event);
 				break;
 			default:
 				throw new Error('This is not supposed to happen!');

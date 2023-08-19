@@ -9,8 +9,7 @@ export enum TurnState {
 	no_cell_selected,
 	own_cell_selected,
 	other_cell_selected,
-	own_span_of_cells_selected,
-	end_of_turn
+	own_span_of_cells_selected
 }
 
 export enum TurnEvent {
@@ -18,8 +17,7 @@ export enum TurnEvent {
 	other_cell_selected,
 	span_selected,
 	cell_deselected,
-	move_occured,
-	turn_over
+	move_occured
 }
 
 export class Turn {
@@ -41,9 +39,6 @@ export class Turn {
 				break;
 			case TurnState.own_span_of_cells_selected:
 				this.own_span_of_cells_selected_handler(event);
-				break;
-			case TurnState.end_of_turn:
-				this.end_of_turn_handler(event);
 				break;
 			default:
 				throw new Error('This is not supposed to happen!');
@@ -82,7 +77,7 @@ export class Turn {
 				this.turn_state = TurnState.no_cell_selected;
 				break;
 			case TurnEvent.move_occured:
-				this.turn_state = TurnState.end_of_turn;
+				this.turn_state = TurnState.no_cell_selected;
 				break;
 			default:
 				throw new Error('This transition is not allowed!');
@@ -117,16 +112,6 @@ export class Turn {
 				this.turn_state = TurnState.no_cell_selected;
 				break;
 			case TurnEvent.move_occured:
-				this.turn_state = TurnState.end_of_turn;
-				break;
-			default:
-				throw new Error('This transition is not allowed!');
-		}
-	}
-
-	private end_of_turn_handler(event: TurnEvent) {
-		switch (event) {
-			case TurnEvent.turn_over:
 				this.turn_state = TurnState.no_cell_selected;
 				break;
 			default:
