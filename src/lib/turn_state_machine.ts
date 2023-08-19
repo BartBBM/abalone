@@ -1,3 +1,10 @@
+import type { Cell } from '$lib';
+
+export enum Player {
+	White = 'white',
+	Black = 'black'
+}
+
 export enum TurnState {
 	no_cell_selected,
 	own_cell_selected,
@@ -17,6 +24,8 @@ export enum TurnEvent {
 
 export class Turn {
 	private turn_state: TurnState = TurnState.no_cell_selected;
+	active_player: Player = Player.White;
+	selected_cells: Cell | null = null;
 
 	transition(event: TurnEvent) {
 		switch (this.turn_state) {
@@ -37,8 +46,11 @@ export class Turn {
 				break;
 			default:
 				throw new Error('This is not supposed to happen!');
-				break;
 		}
+	}
+
+	get_turn_state() {
+		return this.turn_state;
 	}
 
 	private no_cell_selected_handler(event: TurnEvent) {

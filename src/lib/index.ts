@@ -1,12 +1,10 @@
-export enum Player {
-	White,
-	Black
-}
+import { assert } from 'vitest';
+import { Turn, TurnEvent, TurnState } from './turn_state_machine';
 
 export enum CellState {
-	Empty,
-	White,
-	Black
+	White = 'white',
+	Black = 'black',
+	Empty = 'empty'
 }
 
 export class Cell {
@@ -25,17 +23,83 @@ export class Cell {
 	}
 }
 
-// 'd be better to use a state machine
-export enum GameState {
-	no_cell_selected,
-	white_selected,
-	black_selected
-}
-
 export class Game {
 	board: Cell[][];
-	game_state: GameState = GameState.no_cell_selected;
-	latest_selected_cell: Cell | null = null;
+	turn: Turn = new Turn();
+
+	action(row: number, col: number) {
+		const pressed_cell = this.board[row][col];
+		pressed_cell.is_selected = !pressed_cell.is_selected;
+
+		switch (this.turn.get_turn_state()) {
+			case TurnState.no_cell_selected:
+				// before no cell was selected, now it is
+				assert(pressed_cell.is_selected == true);
+
+				if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
+					this.mark_selectable_cells(row, col);
+					this.turn.transition(TurnEvent.own_cell_selected);
+				} else {
+					this.turn.transition(TurnEvent.other_cell_selected);
+				}
+				break;
+			case TurnState.own_cell_selected:
+				// this.own_cell_selected_handler(event);
+				break;
+			case TurnState.other_cell_selected:
+				// this.other_cell_selected_handler(event);
+				break;
+			case TurnState.own_span_of_cells_selected:
+				// this.own_span_of_cells_selected_handler(event);
+				break;
+			case TurnState.end_of_turn:
+				// this.end_of_turn_handler(event);
+				break;
+			default:
+				throw new Error('This is not supposed to happen!');
+		}
+
+		/* if (
+			this.game_state == GameState.black_selected ||
+			this.game_state == GameState.white_selected
+		) {
+			// a colored was selected before
+			if (is_selected == true) {
+				// maybe move cell now
+				if (cell_state != this.latest_selected_cell!.state) {
+					if (
+						this.latest_selected_cell!.get_adjacents().some(
+							(value) => value == this.board[row][col]
+						)
+					) {
+						this.board[row][col].state = this.latest_selected_cell!.state;
+						this.latest_selected_cell!.state = CellState.Empty;
+						this.mark_all_cells_as_unselectable();
+						this.remove_any_other_selected_cells([]);
+						is_selected = !is_selected;
+						this.board[row][col].is_selected = is_selected;
+						this.game_state = GameState.no_cell_selected;
+					}
+				}
+				// missing logic here
+			} else {
+				// same colored cell was selected again
+				this.mark_all_cells_as_unselectable();
+			}
+		} else {
+			if (is_selected == true) {
+				this.remove_any_other_selected_cells([[row, col]]);
+				this.mark_selectable_cells(row, col);
+				if (this.board[row][col].state != CellState.Empty)
+					this.game_state =
+						cell_state == CellState.White ? GameState.white_selected : GameState.black_selected;
+			} else {
+				this.mark_all_cells_as_unselectable();
+			}
+		}
+
+		this.latest_selected_cell = is_selected ? this.board[row][col] : null; */
+	}
 
 	constructor() {
 		// initialize cells
@@ -188,6 +252,7 @@ export class Game {
 			}
 		}
 	}
+
 	mark_all_cells_as_unselectable() {
 		this.board.flat().forEach((value) => (value.is_selectable = false));
 	}

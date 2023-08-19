@@ -2,9 +2,6 @@
 	import { Cell, CellState, Game } from '$lib/index';
 	import Cell_Component from '$lib/Cell.svelte';
 	import { game } from '$lib/stores';
-
-	// function main() {}
-	// main();
 </script>
 
 <!-- {@debug game} -->
