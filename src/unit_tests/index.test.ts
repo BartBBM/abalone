@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Game, Position } from '$lib/index';
-
-// describe('sum test', () => {
-// 	it('adds 1 + 2 to equal 3', () => {
-// 		expect(1 + 2).toBe(3);
-// 	});
-// });
+import { Game } from '$lib/index';
 
 // describe('finding out how stuff works', () => {
 // 	it('how includes() works', () => {
@@ -30,5 +24,16 @@ describe('Game - remove_any_other_selected_cells()', () => {
 		expect(game.board[0][0].is_selected).toBe(false);
 		expect(game.board[0][1].is_selected).toBe(true);
 		expect(game.board[0][2].is_selected).toBe(false);
+	});
+});
+
+describe('Game - mark_selectable_cells()', () => {
+	it('checks if stuff for function works', () => {
+		let game = new Game();
+		game.board.flat().forEach((value) => (value.is_selectable = true));
+
+		expect(game.board[0][0].is_selectable).toBe(true);
+		expect(game.board[4][1].is_selectable).toBe(true);
+		expect(game.board[2][2].is_selectable).toBe(true);
 	});
 });

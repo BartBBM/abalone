@@ -12,7 +12,7 @@ I want to be able to call a function on a cell which influences its state.
 	// main();
 </script>
 
-{@debug game}
+<!-- {@debug game} -->
 
 <div class="flex flex-col">
 	{#each $game.board as row, row_index}
