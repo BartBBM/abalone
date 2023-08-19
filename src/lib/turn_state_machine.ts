@@ -27,7 +27,8 @@ export class Turn {
 	active_player: Player = Player.White;
 	selected_cells: Cell | null = null;
 
-	transition(event: TurnEvent) {
+	transition(event: TurnEvent, selected_cells: Cell | null) {
+		this.selected_cells = selected_cells;
 		switch (this.turn_state) {
 			case TurnState.no_cell_selected:
 				this.no_cell_selected_handler(event);

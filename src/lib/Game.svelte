@@ -1,10 +1,20 @@
 <script lang="ts">
-	import { Cell, CellState, Game } from '$lib/index';
+	import { Cell, CellState, Game, OwnColors } from '$lib/index';
 	import Cell_Component from '$lib/Cell.svelte';
 	import { game } from '$lib/stores';
+	import { Player } from './turn_state_machine';
 </script>
 
 <!-- {@debug game} -->
+
+<div class="my-4 text-center">
+	Active Player: <div
+		class="{$game.turn.active_player == Player.White
+			? OwnColors.White
+			: OwnColors.Black} inline-block h-4 w-4"
+	/>
+	<span class="">{$game.turn.active_player == Player.White ? 'Fuchsia' : 'Teal'} </span>
+</div>
 
 <div class="flex flex-col">
 	{#each $game.board as row, row_index}
