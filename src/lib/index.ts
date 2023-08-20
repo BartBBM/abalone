@@ -87,7 +87,10 @@ export class Game {
 				if (pressed_cell == this.turn.selected_cells?.[0]) {
 					this.turn.transition(TurnEvent.cell_deselected, null);
 				} else if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
-					let [is_possible, index, amount] = this.is_span_selection_possible(pressed_cell);
+					let [is_possible, index, amount] = is_span_selection_possible(
+						this.turn.selected_cells![0],
+						pressed_cell
+					);
 					if (is_possible) {
 						let selected_cells: Cell[] = [
 							this.turn.selected_cells![0],
@@ -135,7 +138,7 @@ export class Game {
 					this.turn.transition(TurnEvent.cell_deselected, null);
 				} else if (
 					pressed_cell.is_adjacent(this.turn.selected_cells!) &&
-					this.is_span_move_possible(this.turn.selected_cells!, pressed_cell)
+					is_span_move_possible(this.turn.selected_cells!, pressed_cell)
 				) {
 					this.span_move(this.turn.selected_cells!, pressed_cell);
 					pressed_cell.is_selected = !pressed_cell.is_selected;
@@ -333,7 +336,7 @@ export class Game {
 		return board_copy;
 	}
 
-	// length of return is always 2
+	// length of return is always 2 = [row, col]
 	private get_indexes_of_cell(cell: Cell): number[] | null {
 		for (let row in this.board) {
 			for (let col in this.board[row]) {
@@ -341,21 +344,6 @@ export class Game {
 			}
 		}
 		return null;
-	}
-
-	is_span_selection_possible(cell: Cell): [boolean, number, SpanLength] {
-		let color = this.turn.selected_cells![0].state;
-
-		let result: [boolean, number, SpanLength] = [false, -1, SpanLength.One];
-		this.turn.selected_cells![0].get_adjacents().forEach((v, i) => {
-			if (v?.state == color) {
-				if (v == cell) result = [true, i, SpanLength.Two];
-				if (v.get_adjacents()[i] != null && v.get_adjacents()[i] == cell)
-					result = [true, i, SpanLength.Three];
-			}
-		});
-
-		return result;
 	}
 
 	remove_any_other_selected_cells(cells_not_to: [number, number][]) {
@@ -429,6 +417,7 @@ export class Game {
 		}
 	}
 
+	// cell spans will only be marked as seen from either end -> otherwise it is not totally clear which direction is wanted by user
 	private mark_selectable_cells_for_span(span: Cell[]) {
 		span.forEach((v) => {
 			if (v.state == CellState.Empty) throw new Error('This should not be possible.');
@@ -441,7 +430,7 @@ export class Game {
 		span.forEach((v) => {
 			v.get_adjacents().forEach((a) => {
 				if (a != null && !span.includes(a)) {
-					if (a.state != cell_color && this.is_span_move_possible(span, a)) {
+					if (a.state != cell_color && is_span_move_possible(span, a)) {
 						a.is_selectable = true;
 					}
 				}
@@ -449,64 +438,17 @@ export class Game {
 		});
 	}
 
-	// cell spans will only be marked as seen from either end -> otherwise it is not totally clear which direction is wanted by user
-
-	// only called on valid pairs of span and to
-	private is_span_move_possible(span: Cell[], to: Cell): boolean {
-		let direction_of_span: Direction = this.get_direction_of_span(span);
-		let [direction_of_possible_move, cell_index_from_which_move_starts] =
-			this.get_direction_of_possible_move(span, to);
-
-		let move_case: SpanMoveCase = this.get_move_case(direction_of_span, direction_of_possible_move);
-
-		if (move_case == SpanMoveCase.Line) {
-			if (
-				span[cell_index_from_which_move_starts].get_adjacents()[direction_of_possible_move]! != to
-			)
-				throw new Error('Grug brain');
-			if (to.state == CellState.Empty) return true;
-			if (to.state != span[0].state) {
-				return this.is_sumito_possible(span, to, direction_of_possible_move);
-			}
-		} else {
-			// are all needed cells empty
-			let result = true;
-			span.forEach((v) => {
-				if (v.get_adjacents()[direction_of_possible_move]?.state != CellState.Empty) {
-					result = false;
-				}
-			});
-			return result;
-		}
-		return false;
-	}
-
-	// here everything else is checked, just needs to check if span is longer than opponents defense
-	private is_sumito_possible(
-		span: Cell[],
-		to: Cell,
-		direction_of_possible_move: Direction
-	): boolean {
-		// create a span from to in direction_of_possible_move
-		let defense = this.get_defense(to, direction_of_possible_move);
-		let defense_value: SpanLength =
-			defense.length <= SpanLength.Three ? defense.length : SpanLength.Three;
-		let own_color = span[0].state == CellState.White ? CellState.White : CellState.Black;
-		if (defense[defense.length - 1].get_adjacents()[direction_of_possible_move]?.state == own_color)
-			defense_value = SpanLength.Three;
-
-		if (span.length > defense_value) return true;
-		return false;
-	}
-
+	// span move is possible
 	private span_move(span: Cell[], to: Cell) {
-		let direction_of_span: Direction = this.get_direction_of_span(span);
-		let [direction_of_move, cell_index_from_which_move_starts] =
-			this.get_direction_of_possible_move(span, to);
-		let move_case: SpanMoveCase = this.get_move_case(direction_of_span, direction_of_move);
+		let direction_of_span: Direction = get_direction_of_span(span);
+		let [direction_of_move, cell_index_from_which_move_starts] = get_direction_of_possible_move(
+			span,
+			to
+		);
+		let move_case: SpanMoveCase = get_move_case(direction_of_span, direction_of_move);
 
 		if (move_case == SpanMoveCase.Line) {
-			let defense = this.get_defense(to, direction_of_move);
+			let defense = get_defense(to, direction_of_move);
 			if (defense.length == 0) 'do nothing, and do not check the other if conditions';
 			else if (defense[defense.length - 1].get_adjacents()[direction_of_move] != null) {
 				// push them away normally
@@ -539,85 +481,157 @@ export class Game {
 			});
 		} else {
 			// Movement to the side
+			span.forEach((v) => {
+				v.get_adjacents()[direction_of_move]!.state = v.state;
+				v.state = CellState.Empty;
+			});
 		}
 	}
+}
 
-	private get_defense(to: Cell, direction_of_possible_move: Direction): Cell[] {
-		if (to.state == CellState.Empty) return [];
-		let defense = [to];
-		while (to.get_adjacents()[direction_of_possible_move]?.state == to.state) {
-			defense.push(to.get_adjacents()[direction_of_possible_move]!);
+function is_span_selection_possible(from_cell: Cell, to_cell: Cell): [boolean, number, SpanLength] {
+	let color = from_cell.state;
+
+	let result: [boolean, number, SpanLength] = [false, -1, SpanLength.One];
+	from_cell.get_adjacents().forEach((v, i) => {
+		if (v?.state == color) {
+			if (v == to_cell) result = [true, i, SpanLength.Two];
+			if (v.get_adjacents()[i] != null && v.get_adjacents()[i] == to_cell)
+				result = [true, i, SpanLength.Three];
 		}
-		return defense;
-	}
+	});
 
-	private get_move_case(
-		direction_of_span: Direction,
-		direction_of_possible_move: Direction
-	): SpanMoveCase {
-		let normalized_direction_of_span: Direction = this.normalize_direction(direction_of_span);
-		let normalized_direction_of_possible_move: Direction = this.normalize_direction(
-			direction_of_possible_move
-		);
-		if (normalized_direction_of_span == normalized_direction_of_possible_move)
-			return SpanMoveCase.Line;
-		return SpanMoveCase.Side;
-	}
+	return result;
+}
 
-	private normalize_direction(dir: Direction): Direction {
-		switch (dir) {
-			case Direction.tl:
-				return Direction.tl;
-			case Direction.tr:
-				return Direction.tr;
-			case Direction.left:
-				return Direction.left;
-			case Direction.right:
-				return Direction.left;
-			case Direction.bl:
-				return Direction.tr;
-			case Direction.br:
-				return Direction.tl;
-			default:
-				throw new Error('Impl Error');
+// only called on valid pairs of span and to
+function is_span_move_possible(span: Cell[], to: Cell): boolean {
+	let direction_of_span: Direction = get_direction_of_span(span);
+	let [direction_of_possible_move, cell_index_from_which_move_starts] =
+		get_direction_of_possible_move(span, to);
+
+	let move_case: SpanMoveCase = get_move_case(direction_of_span, direction_of_possible_move);
+
+	if (move_case == SpanMoveCase.Line) {
+		if (span[cell_index_from_which_move_starts].get_adjacents()[direction_of_possible_move]! != to)
+			throw new Error('Grug brain');
+		if (to.state == CellState.Empty) return true;
+		if (to.state != span[0].state) {
+			return is_sumito_possible(span, to, direction_of_possible_move);
 		}
-	}
-
-	private inverse_direction(dir: Direction): Direction {
-		switch (dir) {
-			case Direction.tl:
-				return Direction.br;
-			case Direction.tr:
-				return Direction.bl;
-			case Direction.left:
-				return Direction.right;
-			case Direction.right:
-				return Direction.left;
-			case Direction.bl:
-				return Direction.tr;
-			case Direction.br:
-				return Direction.tl;
-			default:
-				throw new Error('Impl Error');
-		}
-	}
-
-	private get_direction_of_possible_move(span: Cell[], to: Cell): [Direction, number] {
-		let result: [Direction, number] | null = null;
+	} else {
+		// are all needed cells empty
+		let result = true;
 		span.forEach((v, i) => {
-			let index = v.get_adjacents().indexOf(to);
-			if (index != -1) {
-				result = [index as Direction, i];
+			if (v.get_adjacents()[direction_of_possible_move]?.state != CellState.Empty) {
+				result = false;
 			}
 		});
 
-		if (result == null) {
-			throw new Error('This function was called in a wrong situation!');
-		}
+		// is move unambiguous
+		if (span[0].get_adjacents().includes(to) && span[span.length - 1].get_adjacents().includes(to))
+			result = false;
+
 		return result;
 	}
+	return false;
+}
 
-	private get_direction_of_span(span: Cell[]): Direction {
-		return span[0].get_adjacents().indexOf(span[1]) as Direction;
+// here everything else is checked, just needs to check if span is longer than opponents defense
+export function is_sumito_possible(
+	span: Cell[],
+	to: Cell,
+	direction_of_possible_move: Direction
+): boolean {
+	// create a span from to in direction_of_possible_move
+	let defense = get_defense(to, direction_of_possible_move);
+	let defense_value: SpanLength =
+		defense.length <= SpanLength.Three ? defense.length : SpanLength.Three;
+	let own_color = span[0].state == CellState.White ? CellState.White : CellState.Black;
+	if (defense[defense.length - 1].get_adjacents()[direction_of_possible_move]?.state == own_color)
+		defense_value = SpanLength.Three;
+
+	if (span.length > defense_value) return true;
+	return false;
+}
+
+function get_defense(to: Cell, direction_of_possible_move: Direction): Cell[] {
+	if (to.state == CellState.Empty) return [];
+	let defense = [to];
+	let tmp = to;
+	while (tmp.get_adjacents()[direction_of_possible_move]?.state == to.state) {
+		tmp = tmp.get_adjacents()[direction_of_possible_move]!;
+		defense.push(tmp);
 	}
+	return defense;
+}
+
+function get_move_case(
+	direction_of_span: Direction,
+	direction_of_possible_move: Direction
+): SpanMoveCase {
+	let normalized_direction_of_span: Direction = normalize_direction(direction_of_span);
+	let normalized_direction_of_possible_move: Direction = normalize_direction(
+		direction_of_possible_move
+	);
+	if (normalized_direction_of_span == normalized_direction_of_possible_move)
+		return SpanMoveCase.Line;
+	return SpanMoveCase.Side;
+}
+
+function normalize_direction(dir: Direction): Direction {
+	switch (dir) {
+		case Direction.tl:
+			return Direction.tl;
+		case Direction.tr:
+			return Direction.tr;
+		case Direction.left:
+			return Direction.left;
+		case Direction.right:
+			return Direction.left;
+		case Direction.bl:
+			return Direction.tr;
+		case Direction.br:
+			return Direction.tl;
+		default:
+			throw new Error('Impl Error');
+	}
+}
+
+function inverse_direction(dir: Direction): Direction {
+	switch (dir) {
+		case Direction.tl:
+			return Direction.br;
+		case Direction.tr:
+			return Direction.bl;
+		case Direction.left:
+			return Direction.right;
+		case Direction.right:
+			return Direction.left;
+		case Direction.bl:
+			return Direction.tr;
+		case Direction.br:
+			return Direction.tl;
+		default:
+			throw new Error('Impl Error');
+	}
+}
+
+export function get_direction_of_possible_move(span: Cell[], to: Cell): [Direction, number] {
+	let result: [Direction, number] | null = null;
+	span.forEach((v, i) => {
+		if (span.length == 3 && i == 1) return;
+		let index = v.get_adjacents().indexOf(to);
+		if (index != -1) {
+			result = [index as Direction, i];
+		}
+	});
+
+	if (result == null) throw new Error('This function was called in a wrong situation!');
+
+	return result;
+}
+
+function get_direction_of_span(span: Cell[]): Direction {
+	return span[0].get_adjacents().indexOf(span[1]) as Direction;
 }
