@@ -7,12 +7,18 @@
 	export let row: number;
 	export let col: number;
 
+	export let index: number | null = null;
+
 	let is_selected = false;
 	let is_selectable = false;
 	$: {
-		is_selected = $game.board[row][col].is_selected;
-		is_selectable = $game.board[row][col].is_selectable;
-		cell_state = $game.board[row][col].state;
+		let tmp;
+		if (index == null) tmp = $game.board[row][col];
+		else tmp = $game.outs[index];
+
+		is_selected = tmp.is_selected;
+		is_selectable = tmp.is_selectable;
+		cell_state = tmp.state;
 	}
 
 	function cell_background(cell_state: CellState): String {

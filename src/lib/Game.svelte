@@ -13,7 +13,7 @@
 			? OwnColors.White
 			: OwnColors.Black} inline-block h-4 w-4"
 	/>
-	<span class="">{$game.turn.active_player == Player.White ? 'Fuchsia' : 'Teal'} </span>
+	<span>{$game.turn.active_player == Player.White ? 'Fuchsia | White' : 'Teal | Black'} </span>
 </div>
 
 <div class="flex flex-col">
@@ -30,6 +30,6 @@
 <div class=" flex justify-center">
 	{#each $game.outs as cell, index}
 		<!-- indexes on these Cells do not make sense - todo -->
-		<Cell_Component cell_state={cell.state} row={index} col={index} />
+		<Cell_Component cell_state={cell.state} {index} row={-1} col={-1} />
 	{/each}
 </div>

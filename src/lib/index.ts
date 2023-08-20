@@ -519,7 +519,6 @@ export class Game {
 				cell_which_is_out.state =
 					this.turn.active_player == Player.White ? CellState.Black : CellState.White;
 				this.outs.push(cell_which_is_out);
-				// todo always state wrong when cell out
 
 				// does one too many, but this is not bad
 				for (let i = defense.length - 1; i > 0; --i) {
