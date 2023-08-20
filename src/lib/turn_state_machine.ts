@@ -22,9 +22,9 @@ export enum TurnEvent {
 export class Turn {
 	private turn_state: TurnState = TurnState.no_or_other_cell_selected;
 	active_player: Player = Player.White;
-	selected_cells: Cell | null = null;
+	selected_cells: Cell[] | null = null;
 
-	transition(event: TurnEvent, selected_cells: Cell | null) {
+	transition(event: TurnEvent, selected_cells: Cell[] | null) {
 		this.selected_cells = selected_cells;
 		switch (this.turn_state) {
 			case TurnState.no_or_other_cell_selected:

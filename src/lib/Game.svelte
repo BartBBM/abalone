@@ -25,3 +25,11 @@
 		</div>
 	{/each}
 </div>
+
+<div class="mt-8 text-center">Cells which have been kicked out:</div>
+<div class=" flex justify-center">
+	{#each $game.outs as cell, index}
+		<!-- indexes on these Cells do not make sense - todo -->
+		<Cell_Component cell_state={cell.state} row={index} col={index} />
+	{/each}
+</div>
