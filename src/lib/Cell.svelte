@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Cell, CellState, OwnColors } from '$lib/index';
 	import { game } from '$lib/stores';
-	import { fly } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
+	import { Player } from './turn_state_machine';
 
 	export let cell_state: CellState = CellState.Empty;
 	export let row: number;
@@ -29,7 +30,8 @@
 
 	function toggle_selected() {
 		try {
-			$game.action(row, col);
+			let player = $game.action(row, col);
+			if (player != undefined) show_win(player);
 		} catch (error) {
 			console.log(error);
 			show_notification((error as Error).message);
@@ -52,6 +54,16 @@
 		is_visible: false,
 		message: ''
 	};
+
+	function show_win(player: Player) {
+		win_animation.player = player;
+		win_animation.is_visible = true;
+	}
+
+	let win_animation = {
+		is_visible: false,
+		player: ''
+	};
 </script>
 
 <button
@@ -69,5 +81,15 @@
 		class="fixed bottom-10 right-10 rounded-lg bg-red-700 p-4 text-white shadow-lg shadow-red-500"
 	>
 		<p>{notification.message}</p>
+	</div>
+{/if}
+
+<!-- todo make pretty but should be fine -->
+{#if win_animation.is_visible}
+	<div
+		transition:fade
+		class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50"
+	>
+		<p>{win_animation.player == Player.White ? 'White has won!!!' : 'Black has won!!!'}</p>
 	</div>
 {/if}

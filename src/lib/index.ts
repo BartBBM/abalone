@@ -60,7 +60,7 @@ export class Game {
 	turn: Turn = new Turn();
 	outs: Cell[] = [];
 
-	action(row: number, col: number) {
+	action(row: number, col: number): Player | undefined {
 		const board_copy = this.deep_copy_of_board(); // cuz ts is not that great and has no deep_copy?
 
 		const pressed_cell = this.board[row][col];
@@ -142,6 +142,8 @@ export class Game {
 				) {
 					this.span_move(this.turn.selected_cells!, pressed_cell);
 					pressed_cell.is_selected = !pressed_cell.is_selected;
+
+					if (this.check_if_won()) return this.turn.active_player;
 
 					// toggel active player and next turn
 					this.turn.active_player =
@@ -336,6 +338,21 @@ export class Game {
 		return board_copy;
 	}
 
+	private check_if_won() {
+		let other_player_color =
+			this.turn.active_player == Player.White ? CellState.Black : CellState.White;
+		let out_marbels_of_other_player = this.outs.reduce((count, cell) => {
+			if (cell.state == other_player_color) {
+				return count + 1;
+			}
+			return count;
+		}, 0);
+		if (out_marbels_of_other_player == 5) {
+			return true;
+		}
+		return false;
+	}
+
 	// length of return is always 2 = [row, col]
 	private get_indexes_of_cell(cell: Cell): number[] | null {
 		for (let row in this.board) {
@@ -462,9 +479,9 @@ export class Game {
 					this.turn.active_player == Player.White ? CellState.Black : CellState.White;
 				this.outs.push(cell_which_is_out);
 
-				// does one too many, but this is not bad
-				for (let i = defense.length - 1; i > 0; --i) {
-					defense[i].get_adjacents()[direction_of_move]!.state = defense[i].state;
+				for (let i in defense) {
+					defense[i].state =
+						defense[i].get_adjacents()[inverse_direction(direction_of_move)]!.state;
 				}
 			}
 
