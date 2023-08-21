@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { Cell, CellState, Game, OwnColors } from '$lib/index';
 	import Cell_Component from '$lib/Cell.svelte';
-	import { game } from '$lib/stores';
+	import { game, win_animation } from '$lib/stores';
+	import WinAnimation from './WinAnimation.svelte';
 	import { Player } from './turn_state_machine';
+	import { fade } from 'svelte/transition';
 </script>
 
 <!-- {@debug game} -->
@@ -33,3 +35,8 @@
 		<Cell_Component cell_state={cell.state} {index} row={-1} col={-1} />
 	{/each}
 </div>
+
+<!-- todo make pretty but should be fine -->
+{#if $win_animation.is_visible}
+	<WinAnimation />
+{/if}

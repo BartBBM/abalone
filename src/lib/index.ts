@@ -168,7 +168,7 @@ export class Game {
 		this.initialize_start_formation();
 
 		// testing purposes
-		// this._test_nearly_won();
+		this._test_nearly_won();
 	}
 
 	private create_board(): Cell[][] {

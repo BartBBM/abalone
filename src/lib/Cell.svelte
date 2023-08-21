@@ -4,6 +4,8 @@
 	import { fade, fly } from 'svelte/transition';
 	import { Player } from './turn_state_machine';
 	import { notification } from '$lib/stores';
+	import { show_notification } from './utils/notification';
+	import { show_win } from './utils/win-notification';
 
 	export let cell_state: CellState = CellState.Empty;
 	export let row: number;
@@ -41,26 +43,6 @@
 
 		$game = $game; // so that other subscribers to the store get notified
 	}
-
-	function show_notification(message: string) {
-		$notification.message = message; // this updates automatically
-		$notification.is_visible = true;
-
-		// Automatically hide the notification after a certain time (e.g., 3 seconds)
-		setTimeout(() => {
-			$notification.is_visible = false;
-		}, 3000);
-	}
-
-	function show_win(player: Player) {
-		win_animation.player = player;
-		win_animation.is_visible = true;
-	}
-
-	let win_animation = {
-		is_visible: false,
-		player: ''
-	};
 </script>
 
 <button
@@ -71,13 +53,3 @@
 	{is_selectable ? 'border-4 border-dotted shadow-md brightness-105' : ''}"
 	id="{row}|{col}"
 />
-
-<!-- todo make pretty but should be fine -->
-{#if win_animation.is_visible}
-	<div
-		transition:fade
-		class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 bg-opacity-50"
-	>
-		<p>{win_animation.player == Player.White ? 'White has won!!!' : 'Black has won!!!'}</p>
-	</div>
-{/if}
