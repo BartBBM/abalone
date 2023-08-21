@@ -3,6 +3,7 @@
 	import { game } from '$lib/stores';
 	import { fade, fly } from 'svelte/transition';
 	import { Player } from './turn_state_machine';
+	import { notification } from '$lib/stores';
 
 	export let cell_state: CellState = CellState.Empty;
 	export let row: number;
@@ -30,6 +31,7 @@
 
 	function toggle_selected() {
 		try {
+			console.info(`this.action(${row}, ${col});`);
 			let player = $game.action(row, col);
 			if (player != undefined) show_win(player);
 		} catch (error) {
@@ -41,19 +43,14 @@
 	}
 
 	function show_notification(message: string) {
-		notification.message = message;
-		notification.is_visible = true;
+		$notification.message = message; // this updates automatically
+		$notification.is_visible = true;
 
 		// Automatically hide the notification after a certain time (e.g., 3 seconds)
 		setTimeout(() => {
-			notification.is_visible = false;
+			$notification.is_visible = false;
 		}, 3000);
 	}
-
-	let notification = {
-		is_visible: false,
-		message: ''
-	};
 
 	function show_win(player: Player) {
 		win_animation.player = player;
@@ -74,15 +71,6 @@
 	{is_selectable ? 'border-4 border-dotted shadow-md brightness-105' : ''}"
 	id="{row}|{col}"
 />
-
-{#if notification.is_visible}
-	<div
-		transition:fly={{ y: 200, duration: 1000 }}
-		class="fixed bottom-10 right-10 rounded-lg bg-red-700 p-4 text-white shadow-lg shadow-red-500"
-	>
-		<p>{notification.message}</p>
-	</div>
-{/if}
 
 <!-- todo make pretty but should be fine -->
 {#if win_animation.is_visible}

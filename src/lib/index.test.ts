@@ -136,4 +136,38 @@ describe('is_sumito_possible()', () => {
 
 		expect(res).toBe(true);
 	});
+
+	it('tests if kicking out top right works - bug was in ', () => {
+		let game = new Game();
+		game.action(8, 2);
+		game.action(6, 4);
+		game.action(5, 5);
+		game.action(0, 3);
+		game.action(1, 4);
+		game.action(2, 5);
+		game.action(0, 4);
+		game.action(7, 3);
+		game.action(5, 5);
+		game.action(4, 6);
+		game.action(0, 4);
+		game.action(1, 5);
+		game.action(2, 6);
+		game.action(8, 3);
+		game.action(7, 4);
+		game.action(6, 5);
+		game.action(1, 4);
+		game.action(2, 5);
+		game.action(3, 6);
+		game.action(6, 4);
+		game.action(4, 6);
+
+		// here bug occured -> span was selected, now kicking one marbel off to the top right
+		game.action(3, 6);
+
+		expect(game.board[5][5].state).toBe(Index.CellState.White);
+		expect(game.board[4][6].state).toBe(Index.CellState.White);
+		expect(game.board[3][6].state).toBe(Index.CellState.White);
+		expect(game.board[2][6].state).toBe(Index.CellState.Black);
+		expect(game.outs[0].state).toBe(Index.CellState.Black);
+	});
 });

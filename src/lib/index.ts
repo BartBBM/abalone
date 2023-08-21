@@ -168,8 +168,7 @@ export class Game {
 		this.initialize_start_formation();
 
 		// testing purposes
-		this.board![0][0].state = CellState.Black;
-		this.board![8][4].state = CellState.White;
+		// this._test_nearly_won();
 	}
 
 	private create_board(): Cell[][] {
@@ -326,6 +325,64 @@ export class Game {
 		this.board[8].forEach((v) => (v.state = CellState.White));
 	}
 
+	private _test_nearly_won() {
+		this.action(8, 2);
+		this.action(6, 4);
+		this.action(5, 5);
+		this.action(0, 3);
+		this.action(1, 4);
+		this.action(2, 5);
+		this.action(0, 4);
+		this.action(7, 3);
+		this.action(5, 5);
+		this.action(4, 6);
+		this.action(0, 4);
+		this.action(1, 5);
+		this.action(2, 6);
+		this.action(8, 3);
+		this.action(7, 4);
+		this.action(6, 5);
+		this.action(1, 4);
+		this.action(2, 5);
+		this.action(3, 6);
+		this.action(6, 4);
+		this.action(4, 6);
+		this.action(3, 6);
+		this.action(1, 2);
+		this.action(1, 3);
+		this.action(1, 4);
+		this.action(5, 5);
+		this.action(3, 6);
+		this.action(2, 6);
+		this.action(0, 2);
+		this.action(0, 3);
+		this.action(2, 6);
+		this.action(4, 6);
+		this.action(5, 5);
+		this.action(1, 5);
+		this.action(2, 6);
+		this.action(5, 5);
+		this.action(3, 6);
+		this.action(2, 6);
+		this.action(2, 4);
+		this.action(2, 5);
+		this.action(2, 6);
+		this.action(4, 6);
+		this.action(3, 6);
+		this.action(2, 6);
+		this.action(2, 5);
+		this.action(1, 5);
+		this.action(2, 6);
+		this.action(3, 6);
+		this.action(4, 6);
+		this.action(1, 5);
+		this.action(2, 6);
+		// this would win
+		// this.action(4, 6);
+		// this.action(3, 6);
+		// this.action(2, 6);
+	}
+
 	private deep_copy_of_board(): Cell[][] {
 		let board_copy: Cell[][] = this.create_board();
 		for (let row in this.board) {
@@ -479,16 +536,15 @@ export class Game {
 					this.turn.active_player == Player.White ? CellState.Black : CellState.White;
 				this.outs.push(cell_which_is_out);
 
-				for (let i in defense) {
-					defense[i].state =
-						defense[i].get_adjacents()[inverse_direction(direction_of_move)]!.state;
-				}
+				// from end to beginning
+				defense.reverse().forEach((v) => {
+					v.state = v.get_adjacents()[inverse_direction(direction_of_move)]!.state;
+				});
 			}
 
 			if (cell_index_from_which_move_starts != 0) {
 				span.reverse();
 			}
-			// does one too many too
 			span.forEach((v, i) => {
 				if (i == span.length - 1) {
 					v.state = CellState.Empty;
