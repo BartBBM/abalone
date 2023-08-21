@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { Cell, CellState, OwnColors } from '$lib/index';
+	import { CellState, OwnColors } from '$lib/index';
 	import { game } from '$lib/stores';
-	import { fade, fly } from 'svelte/transition';
-	import { Player } from './turn_state_machine';
-	import { notification } from '$lib/stores';
+	import { crossfade } from '$lib/crossfade';
 	import { show_notification } from './utils/notification';
 	import { show_win } from './utils/win-notification';
 
 	export let cell_state: CellState = CellState.Empty;
+
+	// change row, col, index to Position
 	export let row: number;
 	export let col: number;
 
 	export let index: number | null = null;
+
+	export let key_for_animation: number;
 
 	let is_selected = false;
 	let is_selectable = false;
@@ -20,9 +22,11 @@
 		if (index == null) tmp = $game.board[row][col];
 		else tmp = $game.outs[index];
 
-		is_selected = tmp.is_selected;
-		is_selectable = tmp.is_selectable;
-		cell_state = tmp.state;
+		if (tmp != undefined) {
+			is_selected = tmp.is_selected;
+			is_selectable = tmp.is_selectable;
+			cell_state = tmp.state;
+		}
 	}
 
 	function cell_background(cell_state: CellState): String {
@@ -43,6 +47,8 @@
 
 		$game = $game; // so that other subscribers to the store get notified
 	}
+
+	const [send, receive] = crossfade;
 </script>
 
 <button
@@ -52,4 +58,6 @@
 	{is_selected ? 'border-4 border-dashed shadow-xl brightness-110' : ''} 
 	{is_selectable ? 'border-4 border-dotted shadow-md brightness-105' : ''}"
 	id="{row}|{col}"
+	in:receive={{ key: key_for_animation }}
+	out:send={{ key: key_for_animation }}
 />

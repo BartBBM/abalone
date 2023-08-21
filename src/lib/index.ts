@@ -35,6 +35,7 @@ export class Cell {
 	state: CellState = CellState.Empty;
 	is_selected: boolean = false;
 	is_selectable: boolean = false;
+	key_for_animation: number = -1;
 	tl: Cell | null = null;
 	tr: Cell | null = null;
 	left: Cell | null = null;
@@ -168,7 +169,8 @@ export class Game {
 		this.initialize_start_formation();
 
 		// testing purposes
-		this._test_nearly_won();
+		// this._test_nearly_won();
+		this._test_first_nearly_out();
 	}
 
 	private create_board(): Cell[][] {
@@ -191,6 +193,8 @@ export class Game {
 			}
 			return rowArray;
 		}
+
+		board.flat().forEach((v, i) => (v.key_for_animation = i));
 
 		// initialize adjacents
 		{
@@ -383,6 +387,28 @@ export class Game {
 		// this.action(2, 6);
 	}
 
+	private _test_first_nearly_out() {
+		this.action(8, 4);
+		this.action(7, 5);
+		this.action(6, 6);
+		this.action(0, 4);
+		this.action(1, 5);
+		this.action(2, 6);
+		this.action(7, 5);
+		this.action(6, 6);
+		this.action(5, 7);
+		this.action(1, 5);
+		this.action(2, 6);
+		this.action(3, 7);
+		this.action(6, 6);
+		this.action(5, 7);
+		this.action(4, 8);
+		// next would push first out
+		// this.action(2, 6);
+		// this.action(3, 7);
+		// this.action(4, 8);
+	}
+
 	private deep_copy_of_board(): Cell[][] {
 		let board_copy: Cell[][] = this.create_board();
 		for (let row in this.board) {
@@ -532,6 +558,10 @@ export class Game {
 			} else {
 				// last of defense is out
 				let cell_which_is_out = new Cell();
+				cell_which_is_out.key_for_animation = defense[defense.length - 1].key_for_animation;
+				// next is illegal, just to test
+				this.board[this.get_indexes_of_cell(defense[defense.length - 1])![0]].pop();
+
 				cell_which_is_out.state =
 					this.turn.active_player == Player.White ? CellState.Black : CellState.White;
 				this.outs.push(cell_which_is_out);
