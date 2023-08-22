@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CellState, OwnColors } from '$lib/index';
+	import { Cell, CellState, OwnColors } from '$lib/index';
 	import { game } from '$lib/stores';
 	import { crossfade } from '$lib/crossfade';
 	import { show_notification } from './utils/notification';
@@ -18,21 +18,19 @@
 	let is_selected = false;
 	let is_selectable = false;
 	$: {
-		let tmp;
+		let tmp: Cell;
 		if (index == null) tmp = $game.board[row][col];
 		else tmp = $game.outs[index];
 
-		if (tmp != undefined) {
-			is_selected = tmp.is_selected;
-			is_selectable = tmp.is_selectable;
-			cell_state = tmp.state;
-		}
+		is_selected = tmp.is_selected;
+		is_selectable = tmp.is_selectable;
+		cell_state = tmp.state;
 	}
 
 	function cell_background(cell_state: CellState): String {
 		if (cell_state == CellState.White) return OwnColors.White;
 		if (cell_state == CellState.Black) return OwnColors.Black;
-		return 'bg-white';
+		return '';
 	}
 
 	function toggle_selected() {

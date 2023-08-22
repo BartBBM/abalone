@@ -559,8 +559,8 @@ export class Game {
 				// last of defense is out
 				let cell_which_is_out = new Cell();
 				cell_which_is_out.key_for_animation = defense[defense.length - 1].key_for_animation;
-				// next is illegal, just to test
-				this.board[this.get_indexes_of_cell(defense[defense.length - 1])![0]].pop();
+				// next is illegal, just to test - todo delete next line
+				// this.board[this.get_indexes_of_cell(defense[defense.length - 1])![0]].pop();
 
 				cell_which_is_out.state =
 					this.turn.active_player == Player.White ? CellState.Black : CellState.White;
