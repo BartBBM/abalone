@@ -32,10 +32,10 @@ export enum CellState {
 }
 
 export class Cell {
-	state: CellState = CellState.Empty;
+	marble: Marble | null = null;
+	next_marble: Marble | null = null;
 	is_selected: boolean = false;
 	is_selectable: boolean = false;
-	key_for_animation: number = -1;
 	tl: Cell | null = null;
 	tr: Cell | null = null;
 	left: Cell | null = null;
@@ -54,6 +54,11 @@ export class Cell {
 		});
 		return result;
 	}
+}
+
+export class Marble {
+	state: CellState = CellState.Empty; // todo change to Player
+	key_for_animation: number = -1;
 }
 
 export class Game {
@@ -76,7 +81,9 @@ export class Game {
 				// before no or an other cell was selected
 				if (pressed_cell == this.turn.selected_cells?.[0]) {
 					this.turn.transition(TurnEvent.cell_deselected, null);
-				} else if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
+				} else if (
+					pressed_cell.marble?.state == (this.turn.active_player as unknown as CellState)
+				) {
 					this.mark_selectable_cells_for_single_cell(row, col);
 					this.turn.transition(TurnEvent.own_cell_selected, [pressed_cell]);
 				} else {
@@ -87,7 +94,9 @@ export class Game {
 				// before an own cell was selected so now an move is possible
 				if (pressed_cell == this.turn.selected_cells?.[0]) {
 					this.turn.transition(TurnEvent.cell_deselected, null);
-				} else if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
+				} else if (
+					pressed_cell.marble?.state == (this.turn.active_player as unknown as CellState)
+				) {
 					let [is_possible, index, amount] = is_span_selection_possible(
 						this.turn.selected_cells![0],
 						pressed_cell
@@ -112,12 +121,13 @@ export class Game {
 					// if move or just another cell selected
 					if (this.turn.selected_cells?.[0].is_adjacent([pressed_cell])) {
 						// move
-						if (pressed_cell.state == CellState.Empty) {
-							pressed_cell.state = this.turn.selected_cells[0].state;
-							this.turn.selected_cells[0].state = CellState.Empty;
+						if (pressed_cell.marble == null) {
+							pressed_cell.next_marble = this.turn.selected_cells[0].marble;
+							this.turn.selected_cells[0].marble = null;
 							pressed_cell.is_selected = !pressed_cell.is_selected;
 
 							// toggel active player and next turn
+							// todo put toggle into state machine
 							this.turn.active_player =
 								this.turn.active_player == Player.White ? Player.Black : Player.White;
 							this.turn.transition(TurnEvent.move_occured, null);
@@ -162,6 +172,16 @@ export class Game {
 		}
 	}
 
+	reorder_board() {
+		console.log(this.deep_copy_of_board());
+		this.board.flat().forEach((v) => {
+			v.marble = v.next_marble != null ? v.next_marble : v.marble;
+			v.next_marble = null;
+		});
+		console.log('board was reordered');
+		console.log(this.deep_copy_of_board());
+	}
+
 	constructor() {
 		// this.board = []; // just because otherwise ts cries
 		this.board = this.create_board();
@@ -170,7 +190,7 @@ export class Game {
 
 		// testing purposes
 		// this._test_nearly_won();
-		this._test_first_nearly_out();
+		// this._test_first_nearly_out();
 	}
 
 	private create_board(): Cell[][] {
@@ -193,8 +213,6 @@ export class Game {
 			}
 			return rowArray;
 		}
-
-		board.flat().forEach((v, i) => (v.key_for_animation = i));
 
 		// initialize adjacents
 		{
@@ -316,17 +334,58 @@ export class Game {
 	}
 
 	private initialize_start_formation() {
-		this.board[0].forEach((v) => (v.state = CellState.Black));
-		this.board[1].forEach((v) => (v.state = CellState.Black));
-		this.board[2][2].state = CellState.Black;
-		this.board[2][3].state = CellState.Black;
-		this.board[2][4].state = CellState.Black;
+		// todo make cleaner
+		let animation_id = 0;
 
-		this.board[6][2].state = CellState.White;
-		this.board[6][3].state = CellState.White;
-		this.board[6][4].state = CellState.White;
-		this.board[7].forEach((v) => (v.state = CellState.White));
-		this.board[8].forEach((v) => (v.state = CellState.White));
+		this.board[0].forEach((v) => {
+			v.marble = {
+				state: CellState.Black,
+				key_for_animation: animation_id++
+			};
+		});
+		this.board[1].forEach((v) => {
+			v.marble = {
+				state: CellState.Black,
+				key_for_animation: animation_id++
+			};
+		});
+		this.board[2][2].marble = {
+			state: CellState.Black,
+			key_for_animation: animation_id++
+		};
+		this.board[2][3].marble = {
+			state: CellState.Black,
+			key_for_animation: animation_id++
+		};
+		this.board[2][4].marble = {
+			state: CellState.Black,
+			key_for_animation: animation_id++
+		};
+
+		this.board[6][2].marble = {
+			state: CellState.White,
+			key_for_animation: animation_id++
+		};
+		this.board[6][3].marble = {
+			state: CellState.White,
+			key_for_animation: animation_id++
+		};
+		this.board[6][4].marble = {
+			state: CellState.White,
+			key_for_animation: animation_id++
+		};
+		this.board[7].forEach((v) => {
+			v.marble = {
+				state: CellState.White,
+				key_for_animation: animation_id++
+			};
+		});
+		this.board[8].forEach((v) => {
+			v.marble = {
+				state: CellState.White,
+				key_for_animation: animation_id++
+			};
+		});
 	}
 
 	private _test_nearly_won() {
@@ -413,7 +472,8 @@ export class Game {
 		let board_copy: Cell[][] = this.create_board();
 		for (let row in this.board) {
 			for (let col in this.board[row]) {
-				board_copy[row][col].state = this.board[row][col].state;
+				board_copy[row][col].marble = this.board[row][col].marble;
+				board_copy[row][col].next_marble = this.board[row][col].next_marble;
 				board_copy[row][col].is_selected = this.board[row][col].is_selected;
 				board_copy[row][col].is_selectable = this.board[row][col].is_selectable;
 			}

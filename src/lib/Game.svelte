@@ -22,12 +22,7 @@
 	{#each $game.board as row, row_index}
 		<div class="flex justify-center">
 			{#each row as cell, col_index}
-				<Cell_Component
-					cell_state={cell.state}
-					key_for_animation={cell.key_for_animation}
-					row={row_index}
-					col={col_index}
-				/>
+				<Cell_Component row={row_index} col={col_index} />
 			{/each}
 		</div>
 	{/each}
@@ -37,13 +32,7 @@
 <div class=" flex justify-center">
 	{#each $game.outs as cell, index}
 		<!-- indexes on these Cells do not make sense - todo -->
-		<Cell_Component
-			cell_state={cell.state}
-			key_for_animation={cell.key_for_animation}
-			{index}
-			row={-1}
-			col={-1}
-		/>
+		<Cell_Component {index} row={-1} col={-1} />
 	{/each}
 </div>
 
