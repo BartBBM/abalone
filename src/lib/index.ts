@@ -324,9 +324,7 @@ export class Game {
 	}
 
 	private initialize_start_formation() {
-		// todo make cleaner
 		let animation_id = 0;
-
 		const generate_marble = (player: Player) => {
 			return {
 				state: player,

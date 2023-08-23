@@ -36,7 +36,6 @@
 	{/each}
 </div>
 
-<!-- todo make pretty but should be fine -->
 {#if $win_animation.is_visible}
 	<WinAnimation />
 {/if}
