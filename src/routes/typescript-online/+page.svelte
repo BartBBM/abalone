@@ -2,5 +2,5 @@
 	import Game from '$lib/Game.svelte';
 </script>
 
-<h1 class="my-8 text-center font-bold">Typescript Local</h1>
+<h1 class="my-8 text-center font-bold">Choose Player</h1>
 <Game />

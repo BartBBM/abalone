@@ -28,8 +28,8 @@
 	{/each}
 </div>
 
-<div class="mt-8 text-center">Cells which have been kicked out:</div>
-<div class=" flex justify-center">
+<div class="mt-8 text-center">Kicked out marbles</div>
+<div class="flex justify-center">
 	{#each $game.outs as cell, index}
 		<Cell_Component position={index} />
 	{/each}

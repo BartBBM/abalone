@@ -61,7 +61,7 @@
 
 <button
 	on:click={toggle_selected}
-	class="relative mx-1 box-content h-16 w-16 rounded-full border-2 border-black shadow-sm shadow-black hover:shadow-lg hover:brightness-125
+	class="relative mx-1 box-content h-16 w-16 flex-none rounded-full border-2 border-black shadow-sm shadow-black hover:shadow-lg hover:brightness-125
 	{is_selected ? 'border-dashed shadow-2xl brightness-110' : ''} 
 	{is_selectable ? 'border-dotted shadow-lg brightness-105' : ''}"
 >
