@@ -5,12 +5,9 @@
 	import { show_notification } from './utils/notification';
 	import { show_win } from './utils/win-notification';
 	import { Player } from './turn_state_machine';
+	import type { Position } from './utils/position';
 
-	// change row, col, index to Position
-	export let row: number;
-	export let col: number;
-
-	export let index: number | null = null;
+	export let position: Position;
 
 	let is_selected = false;
 	let is_selectable = false;
@@ -21,8 +18,8 @@
 	let next_marble_key = -1;
 	$: {
 		let tmp: Cell;
-		if (index == null) tmp = $game.board[row][col];
-		else tmp = $game.outs[index];
+		if (typeof position !== 'number') tmp = $game.board[position.row][position.col];
+		else tmp = $game.outs[position];
 
 		is_selected = tmp.is_selected;
 		is_selectable = tmp.is_selectable;
@@ -42,8 +39,9 @@
 
 	function toggle_selected() {
 		try {
-			console.info(`this.action(${row}, ${col});`);
-			let player = $game.action(row, col);
+			if (typeof position === 'number') return;
+			console.info(`this.action(${position.row}, ${position.col});`);
+			let player = $game.action(position.row, position.col);
 			if (player != undefined) show_win(player);
 		} catch (error) {
 			console.log(error);
@@ -66,7 +64,6 @@
 	class="relative mx-1 box-content h-16 w-16 rounded-full border-2 border-black shadow-sm shadow-black hover:shadow-lg hover:brightness-125
 	{is_selected ? 'border-dashed shadow-2xl brightness-110' : ''} 
 	{is_selectable ? 'border-dotted shadow-lg brightness-105' : ''}"
-	id="{row}|{col}"
 >
 	{#if marble}
 		<div
