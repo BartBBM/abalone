@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Cell, CellState, Game, OwnColors } from '$lib/index';
+	import { Cell, Game, OwnColors } from '$lib/index';
 	import Cell_Component from '$lib/Cell.svelte';
 	import { game, win_animation } from '$lib/stores';
 	import WinAnimation from './WinAnimation.svelte';

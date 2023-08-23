@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { Cell, CellState, Marble, OwnColors } from '$lib/index';
+	import { Cell, Marble, OwnColors } from '$lib/index';
 	import { game } from '$lib/stores';
 	import { crossfade } from '$lib/crossfade';
 	import { show_notification } from './utils/notification';
 	import { show_win } from './utils/win-notification';
+	import { Player } from './turn_state_machine';
 
 	// change row, col, index to Position
 	export let row: number;
@@ -29,13 +30,16 @@
 		next_marble = tmp.next_marble;
 
 		// save them cuz marble can be null and then key_for_animation cannot be read anymore
-		if (marble) marble!.key_for_animation = marble.key_for_animation;
-		if (next_marble) next_marble!.key_for_animation = next_marble.key_for_animation;
+		if (marble) marble_key = marble.key_for_animation;
+		if (next_marble) {
+			next_marble_key = next_marble.key_for_animation;
+			console.log('next_marble', row, col, next_marble_key);
+		}
 	}
 
-	function cell_background(cell_state: CellState): String {
-		if (cell_state == CellState.White) return OwnColors.White;
-		if (cell_state == CellState.Black) return OwnColors.Black;
+	function cell_background(cell_state: Player): String {
+		if (cell_state == Player.White) return OwnColors.White;
+		if (cell_state == Player.Black) return OwnColors.Black;
 		return '';
 	}
 
@@ -50,17 +54,15 @@
 		}
 
 		$game = $game; // so that other subscribers to the store get notified
+	}
 
-		setTimeout(() => {
-			$game.reorder_board();
-			$game = $game;
-		}, 10);
+	function reorder_board() {
+		$game.reorder_board();
+		$game = $game;
 	}
 
 	const [send, receive] = crossfade;
 </script>
-
-<!-- {@debug marble} -->
 
 <button
 	on:click={toggle_selected}
@@ -74,8 +76,8 @@
 			class="absolute bottom-0 left-0 right-0 top-0 z-20 h-16 w-16 rounded-full {cell_background(
 				marble.state
 			)}"
-			in:receive={{ key: marble_key }}
-			out:send={{ key: marble_key }}
+			out:send|global={{ key: marble_key }}
+			on:outroend={() => console.log('marble send', row, col, marble_key)}
 		/>
 	{/if}
 	{#if next_marble}
@@ -83,8 +85,8 @@
 			class="absolute bottom-0 left-0 right-0 top-0 z-10 h-16 w-16 rounded-full {cell_background(
 				next_marble.state
 			)}"
-			in:receive={{ key: next_marble_key }}
-			out:send={{ key: next_marble_key }}
+			in:receive|global={{ key: next_marble_key }}
+			on:introend={reorder_board}
 		/>
 	{/if}
 </button>

@@ -25,12 +25,6 @@ export enum Direction {
 	br
 }
 
-export enum CellState {
-	White = 'white',
-	Black = 'black',
-	Empty = 'empty'
-}
-
 export class Cell {
 	marble: Marble | null = null;
 	next_marble: Marble | null = null;
@@ -57,7 +51,7 @@ export class Cell {
 }
 
 export class Marble {
-	state: CellState = CellState.Empty; // todo change to Player
+	state: Player = Player.White;
 	key_for_animation: number = -1;
 }
 
@@ -81,9 +75,7 @@ export class Game {
 				// before no or an other cell was selected
 				if (pressed_cell == this.turn.selected_cells?.[0]) {
 					this.turn.transition(TurnEvent.cell_deselected, null);
-				} else if (
-					pressed_cell.marble?.state == (this.turn.active_player as unknown as CellState)
-				) {
+				} else if (pressed_cell.marble?.state == this.turn.active_player) {
 					this.mark_selectable_cells_for_single_cell(row, col);
 					this.turn.transition(TurnEvent.own_cell_selected, [pressed_cell]);
 				} else {
@@ -94,9 +86,7 @@ export class Game {
 				// before an own cell was selected so now an move is possible
 				if (pressed_cell == this.turn.selected_cells?.[0]) {
 					this.turn.transition(TurnEvent.cell_deselected, null);
-				} else if (
-					pressed_cell.marble?.state == (this.turn.active_player as unknown as CellState)
-				) {
+				} else if (pressed_cell.marble?.state == this.turn.active_player) {
 					let [is_possible, index, amount] = is_span_selection_possible(
 						this.turn.selected_cells![0],
 						pressed_cell
@@ -160,7 +150,7 @@ export class Game {
 					this.turn.active_player =
 						this.turn.active_player == Player.White ? Player.Black : Player.White;
 					this.turn.transition(TurnEvent.move_occured, null);
-				} else if (pressed_cell.state == (this.turn.active_player as unknown as CellState)) {
+				} else if (pressed_cell.marble?.state == this.turn.active_player) {
 					this.mark_selectable_cells_for_single_cell(row, col);
 					this.turn.transition(TurnEvent.own_cell_selected, [pressed_cell]);
 				} else {
@@ -178,7 +168,7 @@ export class Game {
 			v.marble = v.next_marble != null ? v.next_marble : v.marble;
 			v.next_marble = null;
 		});
-		console.log('board was reordered');
+		console.info('board was reordered');
 		console.log(this.deep_copy_of_board());
 	}
 
@@ -339,50 +329,50 @@ export class Game {
 
 		this.board[0].forEach((v) => {
 			v.marble = {
-				state: CellState.Black,
+				state: Player.Black,
 				key_for_animation: animation_id++
 			};
 		});
 		this.board[1].forEach((v) => {
 			v.marble = {
-				state: CellState.Black,
+				state: Player.Black,
 				key_for_animation: animation_id++
 			};
 		});
 		this.board[2][2].marble = {
-			state: CellState.Black,
+			state: Player.Black,
 			key_for_animation: animation_id++
 		};
 		this.board[2][3].marble = {
-			state: CellState.Black,
+			state: Player.Black,
 			key_for_animation: animation_id++
 		};
 		this.board[2][4].marble = {
-			state: CellState.Black,
+			state: Player.Black,
 			key_for_animation: animation_id++
 		};
 
 		this.board[6][2].marble = {
-			state: CellState.White,
+			state: Player.White,
 			key_for_animation: animation_id++
 		};
 		this.board[6][3].marble = {
-			state: CellState.White,
+			state: Player.White,
 			key_for_animation: animation_id++
 		};
 		this.board[6][4].marble = {
-			state: CellState.White,
+			state: Player.White,
 			key_for_animation: animation_id++
 		};
 		this.board[7].forEach((v) => {
 			v.marble = {
-				state: CellState.White,
+				state: Player.White,
 				key_for_animation: animation_id++
 			};
 		});
 		this.board[8].forEach((v) => {
 			v.marble = {
-				state: CellState.White,
+				state: Player.White,
 				key_for_animation: animation_id++
 			};
 		});
@@ -482,10 +472,9 @@ export class Game {
 	}
 
 	private check_if_won() {
-		let other_player_color =
-			this.turn.active_player == Player.White ? CellState.Black : CellState.White;
+		let other_player_color = this.turn.active_player == Player.White ? Player.Black : Player.White;
 		let out_marbels_of_other_player = this.outs.reduce((count, cell) => {
-			if (cell.state == other_player_color) {
+			if (cell.marble?.state == other_player_color) {
 				return count + 1;
 			}
 			return count;
@@ -528,51 +517,55 @@ export class Game {
 
 	// this function is only called on non empty cells, that exist
 	mark_selectable_cells_for_single_cell(row: number, col: number) {
-		if (this.board[row][col].state == CellState.Empty)
-			throw new Error('This should not be possible.');
+		if (this.board[row][col].marble == null) throw new Error('This should not be possible.');
 
 		this.mark_all_cells_as_unselectable();
 
-		let cell_color = this.board[row][col].state;
-		let opposite_color = cell_color == CellState.White ? CellState.Black : CellState.White;
+		// todo make clean
+
+		let cell_color = this.board[row][col].marble?.state;
+		let opposite_color = cell_color == Player.White ? Player.Black : Player.White;
 
 		if (this.board[row][col].tl) {
-			if (this.board[row][col].tl!.state != opposite_color)
+			if (this.board[row][col].tl!.marble?.state != opposite_color)
 				this.board[row][col].tl!.is_selectable = true;
-			if (this.board[row][col].tl!.tl && this.board[row][col].tl!.tl!.state == cell_color)
+			if (this.board[row][col].tl!.tl && this.board[row][col].tl!.tl!.marble?.state == cell_color)
 				this.board[row][col].tl!.tl!.is_selectable = true;
 		}
 		if (this.board[row][col].tr) {
-			if (this.board[row][col].tr!.state != opposite_color)
+			if (this.board[row][col].tr!.marble?.state != opposite_color)
 				this.board[row][col].tr!.is_selectable = true;
-			if (this.board[row][col].tr!.tr && this.board[row][col].tr!.tr!.state == cell_color)
+			if (this.board[row][col].tr!.tr && this.board[row][col].tr!.tr!.marble?.state == cell_color)
 				this.board[row][col].tr!.tr!.is_selectable = true;
 		}
 		if (this.board[row][col].left) {
-			if (this.board[row][col].left!.state != opposite_color)
+			if (this.board[row][col].left!.marble?.state != opposite_color)
 				this.board[row][col].left!.is_selectable = true;
-			if (this.board[row][col].left!.left && this.board[row][col].left!.left!.state == cell_color)
+			if (
+				this.board[row][col].left!.left &&
+				this.board[row][col].left!.left!.marble?.state == cell_color
+			)
 				this.board[row][col].left!.left!.is_selectable = true;
 		}
 		if (this.board[row][col].right) {
-			if (this.board[row][col].right!.state != opposite_color)
+			if (this.board[row][col].right!.marble?.state != opposite_color)
 				this.board[row][col].right!.is_selectable = true;
 			if (
 				this.board[row][col].right!.right &&
-				this.board[row][col].right!.right!.state == cell_color
+				this.board[row][col].right!.right!.marble?.state == cell_color
 			)
 				this.board[row][col].right!.right!.is_selectable = true;
 		}
 		if (this.board[row][col].bl) {
-			if (this.board[row][col].bl!.state != opposite_color)
+			if (this.board[row][col].bl!.marble?.state != opposite_color)
 				this.board[row][col].bl!.is_selectable = true;
-			if (this.board[row][col].bl!.bl && this.board[row][col].bl!.bl!.state == cell_color)
+			if (this.board[row][col].bl!.bl && this.board[row][col].bl!.bl!.marble?.state == cell_color)
 				this.board[row][col].bl!.bl!.is_selectable = true;
 		}
 		if (this.board[row][col].br) {
-			if (this.board[row][col].br!.state != opposite_color)
+			if (this.board[row][col].br!.marble?.state != opposite_color)
 				this.board[row][col].br!.is_selectable = true;
-			if (this.board[row][col].br!.br && this.board[row][col].br!.br!.state == cell_color)
+			if (this.board[row][col].br!.br && this.board[row][col].br!.br!.marble?.state == cell_color)
 				this.board[row][col].br!.br!.is_selectable = true;
 		}
 	}
@@ -580,17 +573,17 @@ export class Game {
 	// cell spans will only be marked as seen from either end -> otherwise it is not totally clear which direction is wanted by user
 	private mark_selectable_cells_for_span(span: Cell[]) {
 		span.forEach((v) => {
-			if (v.state == CellState.Empty) throw new Error('This should not be possible.');
+			if (v.marble == null) throw new Error('This should not be possible.');
 		});
 
 		this.mark_all_cells_as_unselectable();
-		let cell_color = span[0].state;
-		let opposite_color = cell_color == CellState.White ? CellState.Black : CellState.White;
+
+		let cell_color = span[0].marble!.state;
 
 		span.forEach((v) => {
 			v.get_adjacents().forEach((a) => {
 				if (a != null && !span.includes(a)) {
-					if (a.state != cell_color && is_span_move_possible(span, a)) {
+					if (a.marble?.state != cell_color && is_span_move_possible(span, a)) {
 						a.is_selectable = true;
 					}
 				}
@@ -613,51 +606,45 @@ export class Game {
 			else if (defense[defense.length - 1].get_adjacents()[direction_of_move] != null) {
 				// push them away normally
 				for (let i = defense.length - 1; i >= 0; --i) {
-					defense[i].get_adjacents()[direction_of_move]!.state = defense[i].state;
+					defense[i].get_adjacents()[direction_of_move]!.marble!.state = defense[i].marble!.state;
 				}
 			} else {
 				// last of defense is out
-				let cell_which_is_out = new Cell();
-				cell_which_is_out.key_for_animation = defense[defense.length - 1].key_for_animation;
-				// next is illegal, just to test - todo delete next line
-				// this.board[this.get_indexes_of_cell(defense[defense.length - 1])![0]].pop();
-
-				cell_which_is_out.state =
-					this.turn.active_player == Player.White ? CellState.Black : CellState.White;
-				this.outs.push(cell_which_is_out);
+				let cell_which_holds_out_marble = new Cell();
+				cell_which_holds_out_marble.marble = defense[defense.length - 1].marble;
+				this.outs.push(cell_which_holds_out_marble);
 
 				// from end to beginning
 				defense.reverse().forEach((v) => {
-					v.state = v.get_adjacents()[inverse_direction(direction_of_move)]!.state;
+					v.next_marble = v.get_adjacents()[inverse_direction(direction_of_move)]!.marble;
+					v.get_adjacents()[inverse_direction(direction_of_move)]!.marble = null;
 				});
 			}
 
+			// to always begin with the marble moving up front form the attacker
 			if (cell_index_from_which_move_starts != 0) {
 				span.reverse();
 			}
 			span.forEach((v, i) => {
-				if (i == span.length - 1) {
-					v.state = CellState.Empty;
-				} else {
-					v.get_adjacents()[direction_of_move]!.state = v.state;
-				}
+				v.get_adjacents()[direction_of_move]!.next_marble = v.marble;
+				v.marble = null;
 			});
 		} else {
 			// Movement to the side
 			span.forEach((v) => {
-				v.get_adjacents()[direction_of_move]!.state = v.state;
-				v.state = CellState.Empty;
+				v.get_adjacents()[direction_of_move]!.next_marble = v.marble;
+				v.marble = null;
 			});
 		}
 	}
 }
 
 function is_span_selection_possible(from_cell: Cell, to_cell: Cell): [boolean, number, SpanLength] {
-	let color = from_cell.state;
+	let color = from_cell.marble!.state;
 
 	let result: [boolean, number, SpanLength] = [false, -1, SpanLength.One];
 	from_cell.get_adjacents().forEach((v, i) => {
-		if (v?.state == color) {
+		if (v?.marble?.state == color) {
 			if (v == to_cell) result = [true, i, SpanLength.Two];
 			if (v.get_adjacents()[i] != null && v.get_adjacents()[i] == to_cell)
 				result = [true, i, SpanLength.Three];
@@ -678,15 +665,15 @@ function is_span_move_possible(span: Cell[], to: Cell): boolean {
 	if (move_case == SpanMoveCase.Line) {
 		if (span[cell_index_from_which_move_starts].get_adjacents()[direction_of_possible_move]! != to)
 			throw new Error('Grug brain');
-		if (to.state == CellState.Empty) return true;
-		if (to.state != span[0].state) {
+		if (to.marble == null) return true;
+		if (to.marble.state != span[0].marble?.state) {
 			return is_sumito_possible(span, to, direction_of_possible_move);
 		}
 	} else {
 		// are all needed cells empty
 		let result = true;
 		span.forEach((v, i) => {
-			if (v.get_adjacents()[direction_of_possible_move]?.state != CellState.Empty) {
+			if (v.get_adjacents()[direction_of_possible_move]?.marble != null) {
 				result = false;
 			}
 		});
@@ -710,8 +697,11 @@ export function is_sumito_possible(
 	let defense = get_defense(to, direction_of_possible_move);
 	let defense_value: SpanLength =
 		defense.length <= SpanLength.Three ? defense.length : SpanLength.Three;
-	let own_color = span[0].state == CellState.White ? CellState.White : CellState.Black;
-	if (defense[defense.length - 1].get_adjacents()[direction_of_possible_move]?.state == own_color)
+	let own_color = span[0].marble!.state == Player.White ? Player.White : Player.Black;
+	if (
+		defense[defense.length - 1].get_adjacents()[direction_of_possible_move]?.marble?.state ==
+		own_color
+	)
 		defense_value = SpanLength.Three;
 
 	if (span.length > defense_value) return true;
@@ -719,10 +709,10 @@ export function is_sumito_possible(
 }
 
 function get_defense(to: Cell, direction_of_possible_move: Direction): Cell[] {
-	if (to.state == CellState.Empty) return [];
+	if (to.marble == null) return [];
 	let defense = [to];
 	let tmp = to;
-	while (tmp.get_adjacents()[direction_of_possible_move]?.state == to.state) {
+	while (tmp.get_adjacents()[direction_of_possible_move]?.marble?.state == to.marble.state) {
 		tmp = tmp.get_adjacents()[direction_of_possible_move]!;
 		defense.push(tmp);
 	}
