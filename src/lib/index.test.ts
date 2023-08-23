@@ -29,7 +29,7 @@ describe('Game - remove_any_other_selected_cells()', () => {
 	});
 });
 
-describe('Game - mark_selectable_cells()', () => {
+describe('Game - mark_selectable_cells_for_single_cell()', () => {
 	it('checks if stuff for function works', () => {
 		let game = new Game();
 		game.board.flat().forEach((value) => (value.is_selectable = true));
@@ -37,6 +37,37 @@ describe('Game - mark_selectable_cells()', () => {
 		expect(game.board[0][0].is_selectable).toBe(true);
 		expect(game.board[4][1].is_selectable).toBe(true);
 		expect(game.board[2][2].is_selectable).toBe(true);
+	});
+
+	it('function works', () => {
+		let game = new Game();
+		game.action(7, 0);
+		game.reorder_board();
+
+		expect(game.board[5][0].is_selectable).toBe(false);
+		expect(game.board[6][0].is_selectable).toBe(true);
+		expect(game.board[6][1].is_selectable).toBe(true);
+		expect(game.board[7][1].is_selectable).toBe(true);
+		expect(game.board[7][2].is_selectable).toBe(true);
+		expect(game.board[8][0].is_selectable).toBe(true);
+	});
+	it('function works', () => {
+		let game = new Game();
+		game.action(7, 0);
+		game.reorder_board();
+		game.action(6, 0);
+		game.reorder_board();
+		game.action(1, 0);
+		game.reorder_board();
+		game.action(2, 0);
+		game.reorder_board();
+		game.action(6, 0);
+		game.reorder_board();
+
+		expect(game.board[6][1].is_selectable).toBe(true);
+		expect(game.board[6][2].is_selectable).toBe(false);
+		expect(game.board[7][0].is_selectable).toBe(true);
+		expect(game.board[8][0].is_selectable).toBe(false);
 	});
 });
 

@@ -20,6 +20,11 @@ export enum TurnEvent {
 }
 
 export class Turn {
+	/**
+	 * This turn state machine does nothing than track the current state of a turn and check if the events that happen are valid.
+	 * The transition function has no side effect other than if a 'move_occured' to also toggle the active player.
+	 */
+
 	private turn_state: TurnState = TurnState.no_or_other_cell_selected;
 	active_player: Player = Player.White;
 	selected_cells: Cell[] | null = null;
@@ -76,6 +81,7 @@ export class Turn {
 				this.turn_state = TurnState.no_or_other_cell_selected;
 				break;
 			case TurnEvent.move_occured:
+				this.active_player = this.active_player == Player.White ? Player.Black : Player.White;
 				this.turn_state = TurnState.no_or_other_cell_selected;
 				break;
 			default:
@@ -95,6 +101,7 @@ export class Turn {
 				this.turn_state = TurnState.no_or_other_cell_selected;
 				break;
 			case TurnEvent.move_occured:
+				this.active_player = this.active_player == Player.White ? Player.Black : Player.White;
 				this.turn_state = TurnState.no_or_other_cell_selected;
 				break;
 			default:

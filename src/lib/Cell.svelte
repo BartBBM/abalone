@@ -31,10 +31,7 @@
 
 		// save them cuz marble can be null and then key_for_animation cannot be read anymore
 		if (marble) marble_key = marble.key_for_animation;
-		if (next_marble) {
-			next_marble_key = next_marble.key_for_animation;
-			console.log('next_marble', row, col, next_marble_key);
-		}
+		if (next_marble) next_marble_key = next_marble.key_for_animation;
 	}
 
 	function cell_background(cell_state: Player): String {
@@ -64,6 +61,7 @@
 	const [send, receive] = crossfade;
 </script>
 
+<!-- todo reorder board only when all animations are done -> marble getting kicked out takes longer -->
 <button
 	on:click={toggle_selected}
 	class="relative mx-1 box-content h-16 w-16 rounded-full border-2 border-black shadow-sm hover:shadow-lg hover:brightness-125
@@ -77,8 +75,8 @@
 				marble.state
 			)}"
 			out:send|global={{ key: marble_key }}
-			on:outroend={() => console.log('marble send', row, col, marble_key)}
 		/>
+		<!-- on:outroend={() => console.log('marble send', row, col, marble_key)} -->
 	{/if}
 	{#if next_marble}
 		<div

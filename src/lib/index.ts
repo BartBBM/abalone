@@ -117,9 +117,6 @@ export class Game {
 							pressed_cell.is_selected = !pressed_cell.is_selected;
 
 							// toggel active player and next turn
-							// todo put toggle into state machine
-							this.turn.active_player =
-								this.turn.active_player == Player.White ? Player.Black : Player.White;
 							this.turn.transition(TurnEvent.move_occured, null);
 						} else {
 							// move is illegal, display error, leave the rest
@@ -147,8 +144,6 @@ export class Game {
 					if (this.check_if_won()) return this.turn.active_player;
 
 					// toggel active player and next turn
-					this.turn.active_player =
-						this.turn.active_player == Player.White ? Player.Black : Player.White;
 					this.turn.transition(TurnEvent.move_occured, null);
 				} else if (pressed_cell.marble?.state == this.turn.active_player) {
 					this.mark_selectable_cells_for_single_cell(row, col);
@@ -163,13 +158,17 @@ export class Game {
 	}
 
 	reorder_board() {
-		console.log(this.deep_copy_of_board());
+		// console.log(this.deep_copy_of_board());
 		this.board.flat().forEach((v) => {
 			v.marble = v.next_marble != null ? v.next_marble : v.marble;
 			v.next_marble = null;
 		});
-		console.info('board was reordered');
-		console.log(this.deep_copy_of_board());
+		this.outs.forEach((v) => {
+			v.marble = v.next_marble != null ? v.next_marble : v.marble;
+			v.next_marble = null;
+		});
+		// console.info('board and outs was reordered');
+		// console.log(this.deep_copy_of_board());
 	}
 
 	constructor() {
@@ -180,7 +179,8 @@ export class Game {
 
 		// testing purposes
 		// this._test_nearly_won();
-		this._test_first_nearly_out();
+		// this._test_first_nearly_out();
+		// this._bug_test();
 	}
 
 	private create_board(): Cell[][] {
@@ -380,56 +380,107 @@ export class Game {
 
 	private _test_nearly_won() {
 		this.action(8, 2);
+		this.reorder_board();
 		this.action(6, 4);
+		this.reorder_board();
 		this.action(5, 5);
+		this.reorder_board();
 		this.action(0, 3);
+		this.reorder_board();
 		this.action(1, 4);
+		this.reorder_board();
 		this.action(2, 5);
+		this.reorder_board();
 		this.action(0, 4);
+		this.reorder_board();
 		this.action(7, 3);
+		this.reorder_board();
 		this.action(5, 5);
+		this.reorder_board();
 		this.action(4, 6);
+		this.reorder_board();
 		this.action(0, 4);
+		this.reorder_board();
 		this.action(1, 5);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(8, 3);
+		this.reorder_board();
 		this.action(7, 4);
+		this.reorder_board();
 		this.action(6, 5);
+		this.reorder_board();
 		this.action(1, 4);
+		this.reorder_board();
 		this.action(2, 5);
+		this.reorder_board();
 		this.action(3, 6);
+		this.reorder_board();
 		this.action(6, 4);
+		this.reorder_board();
 		this.action(4, 6);
+		this.reorder_board();
 		this.action(3, 6);
+		this.reorder_board();
 		this.action(1, 2);
+		this.reorder_board();
 		this.action(1, 3);
+		this.reorder_board();
 		this.action(1, 4);
+		this.reorder_board();
 		this.action(5, 5);
+		this.reorder_board();
 		this.action(3, 6);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(0, 2);
+		this.reorder_board();
 		this.action(0, 3);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(4, 6);
+		this.reorder_board();
 		this.action(5, 5);
+		this.reorder_board();
 		this.action(1, 5);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(5, 5);
+		this.reorder_board();
 		this.action(3, 6);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(2, 4);
+		this.reorder_board();
 		this.action(2, 5);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(4, 6);
+		this.reorder_board();
 		this.action(3, 6);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(2, 5);
+		this.reorder_board();
 		this.action(1, 5);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(3, 6);
+		this.reorder_board();
 		this.action(4, 6);
+		this.reorder_board();
 		this.action(1, 5);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		// this would win
 		// this.action(4, 6);
 		// this.action(3, 6);
@@ -473,6 +524,51 @@ export class Game {
 		// this.action(4, 8);
 	}
 
+	private _bug_test() {
+		this.action(8, 2);
+		this.reorder_board();
+		this.action(6, 4);
+		this.reorder_board();
+		this.action(5, 5);
+		this.reorder_board();
+		this.action(0, 3);
+		this.reorder_board();
+		this.action(1, 4);
+		this.reorder_board();
+		this.action(2, 5);
+		this.reorder_board();
+		this.action(0, 4);
+		this.reorder_board();
+		this.action(7, 3);
+		this.reorder_board();
+		this.action(5, 5);
+		this.reorder_board();
+		this.action(4, 6);
+		this.reorder_board();
+		this.action(0, 4);
+		this.reorder_board();
+		this.action(1, 5);
+		this.reorder_board();
+		this.action(2, 6);
+		this.reorder_board();
+		this.action(8, 3);
+		this.reorder_board();
+		this.action(7, 4);
+		this.reorder_board();
+		this.action(6, 5);
+		this.reorder_board();
+		this.action(1, 4);
+		this.reorder_board();
+		this.action(2, 5);
+		this.reorder_board();
+		this.action(3, 6);
+		this.reorder_board();
+		this.action(6, 4);
+		this.reorder_board();
+		this.action(4, 6);
+		this.reorder_board();
+	}
+
 	private deep_copy_of_board(): Cell[][] {
 		let board_copy: Cell[][] = this.create_board();
 		for (let row in this.board) {
@@ -489,7 +585,10 @@ export class Game {
 	private check_if_won() {
 		let other_player_color = this.turn.active_player == Player.White ? Player.Black : Player.White;
 		let out_marbels_of_other_player = this.outs.reduce((count, cell) => {
-			if (cell.marble?.state == other_player_color) {
+			if (
+				cell.marble?.state == other_player_color ||
+				cell.next_marble?.state == other_player_color
+			) {
 				return count + 1;
 			}
 			return count;
@@ -536,53 +635,21 @@ export class Game {
 
 		this.mark_all_cells_as_unselectable();
 
-		// todo make clean
-
 		let cell_color = this.board[row][col].marble?.state;
-		let opposite_color = cell_color == Player.White ? Player.Black : Player.White;
+		let opposite_color = cell_color === Player.White ? Player.Black : Player.White;
 
-		if (this.board[row][col].tl) {
-			if (this.board[row][col].tl!.marble?.state != opposite_color)
-				this.board[row][col].tl!.is_selectable = true;
-			if (this.board[row][col].tl!.tl && this.board[row][col].tl!.tl!.marble?.state == cell_color)
-				this.board[row][col].tl!.tl!.is_selectable = true;
-		}
-		if (this.board[row][col].tr) {
-			if (this.board[row][col].tr!.marble?.state != opposite_color)
-				this.board[row][col].tr!.is_selectable = true;
-			if (this.board[row][col].tr!.tr && this.board[row][col].tr!.tr!.marble?.state == cell_color)
-				this.board[row][col].tr!.tr!.is_selectable = true;
-		}
-		if (this.board[row][col].left) {
-			if (this.board[row][col].left!.marble?.state != opposite_color)
-				this.board[row][col].left!.is_selectable = true;
-			if (
-				this.board[row][col].left!.left &&
-				this.board[row][col].left!.left!.marble?.state == cell_color
-			)
-				this.board[row][col].left!.left!.is_selectable = true;
-		}
-		if (this.board[row][col].right) {
-			if (this.board[row][col].right!.marble?.state != opposite_color)
-				this.board[row][col].right!.is_selectable = true;
-			if (
-				this.board[row][col].right!.right &&
-				this.board[row][col].right!.right!.marble?.state == cell_color
-			)
-				this.board[row][col].right!.right!.is_selectable = true;
-		}
-		if (this.board[row][col].bl) {
-			if (this.board[row][col].bl!.marble?.state != opposite_color)
-				this.board[row][col].bl!.is_selectable = true;
-			if (this.board[row][col].bl!.bl && this.board[row][col].bl!.bl!.marble?.state == cell_color)
-				this.board[row][col].bl!.bl!.is_selectable = true;
-		}
-		if (this.board[row][col].br) {
-			if (this.board[row][col].br!.marble?.state != opposite_color)
-				this.board[row][col].br!.is_selectable = true;
-			if (this.board[row][col].br!.br && this.board[row][col].br!.br!.marble?.state == cell_color)
-				this.board[row][col].br!.br!.is_selectable = true;
-		}
+		this.board[row][col].get_adjacents().forEach((v, i) => {
+			if (v) {
+				if (v!.marble?.state !== opposite_color) v!.is_selectable = true;
+				if (
+					v.marble &&
+					v!.get_adjacents()[i]?.marble &&
+					v!.get_adjacents()[i]!.marble?.state === cell_color
+				)
+					// if (v.marble && v!.get_adjacents()[i]!.marble?.state === cell_color)
+					v!.get_adjacents()[i]!.is_selectable = true;
+			}
+		});
 	}
 
 	// cell spans will only be marked as seen from either end -> otherwise it is not totally clear which direction is wanted by user
