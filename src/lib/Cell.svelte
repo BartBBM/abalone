@@ -64,9 +64,9 @@
 <!-- todo reorder board only when all animations are done -> marble getting kicked out takes longer -->
 <button
 	on:click={toggle_selected}
-	class="relative mx-1 box-content h-16 w-16 rounded-full border-2 border-black shadow-sm hover:shadow-lg hover:brightness-125
-	{is_selected ? 'border-4 border-dashed shadow-xl brightness-110' : ''} 
-	{is_selectable ? 'border-4 border-dotted shadow-md brightness-105' : ''}"
+	class="relative mx-1 box-content h-16 w-16 rounded-full border-2 border-black shadow-sm shadow-black hover:shadow-lg hover:brightness-125
+	{is_selected ? 'border-dashed shadow-2xl brightness-110' : ''} 
+	{is_selectable ? 'border-dotted shadow-lg brightness-105' : ''}"
 	id="{row}|{col}"
 >
 	{#if marble}

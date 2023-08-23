@@ -56,9 +56,9 @@ export class Marble {
 }
 
 export class Game {
-	board: Cell[][];
+	board: Cell[][]; // marbles all in marble, get shifted down from next_marble
 	turn: Turn = new Turn();
-	outs: Cell[] = [];
+	outs: Cell[] = []; // marbles all in next_marble
 
 	action(row: number, col: number): Player | undefined {
 		const board_copy = this.deep_copy_of_board(); // cuz ts is not that great and has no deep_copy?
@@ -163,10 +163,10 @@ export class Game {
 			v.marble = v.next_marble != null ? v.next_marble : v.marble;
 			v.next_marble = null;
 		});
-		this.outs.forEach((v) => {
-			v.marble = v.next_marble != null ? v.next_marble : v.marble;
-			v.next_marble = null;
-		});
+		// this.outs.forEach((v) => {
+		// 	v.marble = v.next_marble != null ? v.next_marble : v.marble;
+		// 	v.next_marble = null;
+		// });
 		// console.info('board and outs was reordered');
 		// console.log(this.deep_copy_of_board());
 	}
@@ -178,7 +178,7 @@ export class Game {
 		this.initialize_start_formation();
 
 		// testing purposes
-		// this._test_nearly_won();
+		this._test_nearly_won();
 		// this._test_first_nearly_out();
 		// this._bug_test();
 	}
@@ -327,55 +327,24 @@ export class Game {
 		// todo make cleaner
 		let animation_id = 0;
 
-		this.board[0].forEach((v) => {
-			v.marble = {
-				state: Player.Black,
+		const generate_marble = (player: Player) => {
+			return {
+				state: player,
 				key_for_animation: animation_id++
 			};
-		});
-		this.board[1].forEach((v) => {
-			v.marble = {
-				state: Player.Black,
-				key_for_animation: animation_id++
-			};
-		});
-		this.board[2][2].marble = {
-			state: Player.Black,
-			key_for_animation: animation_id++
-		};
-		this.board[2][3].marble = {
-			state: Player.Black,
-			key_for_animation: animation_id++
-		};
-		this.board[2][4].marble = {
-			state: Player.Black,
-			key_for_animation: animation_id++
 		};
 
-		this.board[6][2].marble = {
-			state: Player.White,
-			key_for_animation: animation_id++
-		};
-		this.board[6][3].marble = {
-			state: Player.White,
-			key_for_animation: animation_id++
-		};
-		this.board[6][4].marble = {
-			state: Player.White,
-			key_for_animation: animation_id++
-		};
-		this.board[7].forEach((v) => {
-			v.marble = {
-				state: Player.White,
-				key_for_animation: animation_id++
-			};
-		});
-		this.board[8].forEach((v) => {
-			v.marble = {
-				state: Player.White,
-				key_for_animation: animation_id++
-			};
-		});
+		this.board[0].forEach((v) => (v.marble = generate_marble(Player.Black)));
+		this.board[1].forEach((v) => (v.marble = generate_marble(Player.Black)));
+		this.board[2][2].marble = generate_marble(Player.Black);
+		this.board[2][3].marble = generate_marble(Player.Black);
+		this.board[2][4].marble = generate_marble(Player.Black);
+
+		this.board[6][2].marble = generate_marble(Player.White);
+		this.board[6][3].marble = generate_marble(Player.White);
+		this.board[6][4].marble = generate_marble(Player.White);
+		this.board[7].forEach((v) => (v.marble = generate_marble(Player.White)));
+		this.board[8].forEach((v) => (v.marble = generate_marble(Player.White)));
 	}
 
 	private _test_nearly_won() {
@@ -694,7 +663,7 @@ export class Game {
 			} else {
 				// last of defense is out
 				let cell_which_holds_out_marble = new Cell();
-				cell_which_holds_out_marble.next_marble = defense[defense.length - 1].marble; // todo reorder also outs
+				cell_which_holds_out_marble.next_marble = defense[defense.length - 1].marble;
 				this.outs.push(cell_which_holds_out_marble);
 
 				// from end to beginning

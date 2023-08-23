@@ -14,8 +14,9 @@
 			return {
 				character: characters[i % characters.length],
 				x: Math.random() * 90,
-				y: -20 - Math.random() * 100,
-				r: 0.1 + Math.random() * 1
+				y: 10 - Math.random() * 80,
+				r: 0.1 + Math.random() * 1,
+				o: 1
 			};
 		})
 		.sort((a, b) => a.r - b.r);
@@ -28,7 +29,10 @@
 
 			confetti = confetti.map((emoji) => {
 				emoji.y += 0.5 * emoji.r;
-				if (emoji.y > 120) emoji.y = -20;
+				emoji.o = 1;
+				if (emoji.y < 20) emoji.o = (emoji.y - 10) / 10;
+				if (emoji.y > 80) emoji.o = -0.1 * (emoji.y - 80) + 1;
+				if (emoji.y > 90) emoji.y = -20;
 				return emoji;
 			});
 		}
@@ -50,18 +54,19 @@
 	</p>
 </div>
 
-<div class="h-full w-full overflow-hidden">
+<div transition:fade class="h-full w-full overflow-hidden">
 	{#each confetti as c}
 		<span
-			transition:fade
 			class="absolute select-none text-6xl"
-			style="left: {c.x}%; top: {c.y}%; transform: scale({c.r})">{c.character}</span
+			style="left: {c.x}%; top: {c.y}%; transform: scale({c.r}); opacity: {c.o};"
+			>{c.character}</span
 		>
 	{/each}
 </div>
 
-<style>
+<!-- This is shit, cuz it is enabled while winanimation is not rendered -->
+<!-- <style>
 	:global(body) {
 		overflow: hidden;
 	}
-</style>
+</style> -->
