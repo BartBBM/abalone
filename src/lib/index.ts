@@ -180,7 +180,7 @@ export class Game {
 
 		// testing purposes
 		// this._test_nearly_won();
-		// this._test_first_nearly_out();
+		this._test_first_nearly_out();
 	}
 
 	private create_board(): Cell[][] {
@@ -438,20 +438,35 @@ export class Game {
 
 	private _test_first_nearly_out() {
 		this.action(8, 4);
+		this.reorder_board();
 		this.action(7, 5);
+		this.reorder_board();
 		this.action(6, 6);
+		this.reorder_board();
 		this.action(0, 4);
+		this.reorder_board();
 		this.action(1, 5);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(7, 5);
+		this.reorder_board();
 		this.action(6, 6);
+		this.reorder_board();
 		this.action(5, 7);
+		this.reorder_board();
 		this.action(1, 5);
+		this.reorder_board();
 		this.action(2, 6);
+		this.reorder_board();
 		this.action(3, 7);
+		this.reorder_board();
 		this.action(6, 6);
+		this.reorder_board();
 		this.action(5, 7);
+		this.reorder_board();
 		this.action(4, 8);
+		this.reorder_board();
 		// next would push first out
 		// this.action(2, 6);
 		// this.action(3, 7);
@@ -605,19 +620,24 @@ export class Game {
 			if (defense.length == 0) 'do nothing, and do not check the other if conditions';
 			else if (defense[defense.length - 1].get_adjacents()[direction_of_move] != null) {
 				// push them away normally
-				for (let i = defense.length - 1; i >= 0; --i) {
-					defense[i].get_adjacents()[direction_of_move]!.marble!.state = defense[i].marble!.state;
-				}
+				defense.reverse().forEach((v) => {
+					v.get_adjacents()[direction_of_move]!.next_marble = v.marble;
+					v.marble = null;
+				});
 			} else {
 				// last of defense is out
 				let cell_which_holds_out_marble = new Cell();
-				cell_which_holds_out_marble.marble = defense[defense.length - 1].marble;
+				cell_which_holds_out_marble.next_marble = defense[defense.length - 1].marble; // todo reorder also outs
 				this.outs.push(cell_which_holds_out_marble);
 
 				// from end to beginning
 				defense.reverse().forEach((v) => {
-					v.next_marble = v.get_adjacents()[inverse_direction(direction_of_move)]!.marble;
-					v.get_adjacents()[inverse_direction(direction_of_move)]!.marble = null;
+					if (v.get_adjacents()[direction_of_move] == null) {
+						v.marble = null;
+						return;
+					}
+					v.get_adjacents()[direction_of_move]!.next_marble = v.marble;
+					v.marble = null;
 				});
 			}
 

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Game } from '$lib/index';
 import * as Index from '$lib/index';
+import { Player } from './turn_state_machine';
 
 // describe('finding out how stuff works', () => {
 // 	it('how includes() works', () => {
@@ -72,9 +73,18 @@ describe('is_sumito_possible()', () => {
 		let game = new Game();
 		game.board.flat().forEach((value) => (value.is_selectable = false));
 
-		game.board[4][0].state = Index.CellState.Black;
-		game.board[4][1].state = Index.CellState.White;
-		game.board[4][2].state = Index.CellState.White;
+		game.board[4][0].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][1].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
+		game.board[4][2].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
 
 		let span = [game.board[4][2], game.board[4][1]];
 		let to = game.board[4][0];
@@ -88,10 +98,22 @@ describe('is_sumito_possible()', () => {
 		let game = new Game();
 		game.board.flat().forEach((value) => (value.is_selectable = false));
 
-		game.board[4][0].state = Index.CellState.Black;
-		game.board[4][1].state = Index.CellState.Black;
-		game.board[4][2].state = Index.CellState.White;
-		game.board[4][3].state = Index.CellState.White;
+		game.board[4][0].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][1].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][2].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
+		game.board[4][3].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
 
 		let span = [game.board[4][3], game.board[4][2]];
 		let to = game.board[4][1];
@@ -105,11 +127,26 @@ describe('is_sumito_possible()', () => {
 		let game = new Game();
 		game.board.flat().forEach((value) => (value.is_selectable = false));
 
-		game.board[4][0].state = Index.CellState.Black;
-		game.board[4][1].state = Index.CellState.Black;
-		game.board[4][2].state = Index.CellState.Black;
-		game.board[4][3].state = Index.CellState.White;
-		game.board[4][4].state = Index.CellState.White;
+		game.board[4][0].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][1].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][2].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][3].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
+		game.board[4][4].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
 
 		let span = [game.board[4][3], game.board[4][4]];
 		let to = game.board[4][2];
@@ -123,11 +160,26 @@ describe('is_sumito_possible()', () => {
 		let game = new Game();
 		game.board.flat().forEach((value) => (value.is_selectable = false));
 
-		game.board[4][0].state = Index.CellState.Black;
-		game.board[4][1].state = Index.CellState.Black;
-		game.board[4][2].state = Index.CellState.White;
-		game.board[4][3].state = Index.CellState.White;
-		game.board[4][4].state = Index.CellState.White;
+		game.board[4][0].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][1].marble = {
+			state: Player.Black,
+			key_for_animation: -1
+		};
+		game.board[4][2].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
+		game.board[4][3].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
+		game.board[4][4].marble = {
+			state: Player.White,
+			key_for_animation: -1
+		};
 
 		let span = [game.board[4][2], game.board[4][3], game.board[4][4]];
 		let to = game.board[4][1];
@@ -140,34 +192,56 @@ describe('is_sumito_possible()', () => {
 	it('tests if kicking out top right works - bug was in ', () => {
 		let game = new Game();
 		game.action(8, 2);
+		game.reorder_board();
 		game.action(6, 4);
+		game.reorder_board();
 		game.action(5, 5);
+		game.reorder_board();
 		game.action(0, 3);
+		game.reorder_board();
 		game.action(1, 4);
+		game.reorder_board();
 		game.action(2, 5);
+		game.reorder_board();
 		game.action(0, 4);
+		game.reorder_board();
 		game.action(7, 3);
+		game.reorder_board();
 		game.action(5, 5);
+		game.reorder_board();
 		game.action(4, 6);
+		game.reorder_board();
 		game.action(0, 4);
+		game.reorder_board();
 		game.action(1, 5);
+		game.reorder_board();
 		game.action(2, 6);
+		game.reorder_board();
 		game.action(8, 3);
+		game.reorder_board();
 		game.action(7, 4);
+		game.reorder_board();
 		game.action(6, 5);
+		game.reorder_board();
 		game.action(1, 4);
+		game.reorder_board();
 		game.action(2, 5);
+		game.reorder_board();
 		game.action(3, 6);
+		game.reorder_board();
 		game.action(6, 4);
+		game.reorder_board();
 		game.action(4, 6);
+		game.reorder_board();
 
 		// here bug occured -> span was selected, now kicking one marbel off to the top right
 		game.action(3, 6);
+		game.reorder_board();
 
-		expect(game.board[5][5].state).toBe(Index.CellState.White);
-		expect(game.board[4][6].state).toBe(Index.CellState.White);
-		expect(game.board[3][6].state).toBe(Index.CellState.White);
-		expect(game.board[2][6].state).toBe(Index.CellState.Black);
-		expect(game.outs[0].state).toBe(Index.CellState.Black);
+		expect(game.board[5][5].marble?.state).toBe(Player.White);
+		expect(game.board[4][6].marble?.state).toBe(Player.White);
+		expect(game.board[3][6].marble?.state).toBe(Player.White);
+		expect(game.board[2][6].marble?.state).toBe(Player.Black);
+		expect(game.outs[0].marble?.state).toBe(Player.Black);
 	});
 });

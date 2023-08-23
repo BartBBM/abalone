@@ -2,7 +2,7 @@ import { quintOut } from 'svelte/easing';
 import { crossfade as svelteCrossfade } from 'svelte/transition';
 
 export const crossfade = svelteCrossfade({
-	duration: (d) => Math.sqrt(d * 20000),
+	duration: (d) => Math.sqrt(d * 10000),
 
 	fallback(node, params) {
 		const style = getComputedStyle(node);
