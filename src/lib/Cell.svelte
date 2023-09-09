@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Cell, Marble, OwnColors } from '$lib/index';
-	import { game } from '$lib/stores';
+	import { game, marble_animation_count } from '$lib/stores';
 	import { crossfade } from '$lib/crossfade';
 	import { show_notification } from './utils/notification';
 	import { show_win } from './utils/win-notification';
@@ -55,14 +55,24 @@
 	// i do not understand this
 	function reorder_board() {
 		// with this it works always
-		setTimeout(() => {
-			$game.reorder_board();
-			$game = $game;
-		}, 1);
+		// setTimeout(() => {
+		// 	$game.reorder_board();
+		// 	$game = $game;
+		// }, 1);
 
-		// this alone it does not
+		// this alone it does not, even blinks shortly
 		// $game.reorder_board();
 		// $game = $game;
+
+
+		// new technique
+		$marble_animation_count -= 1;
+		console.log($marble_animation_count)
+		if ($marble_animation_count == 0) {
+			$game.reorder_board();
+			$game = $game;
+			console.log("yesssss")
+		}
 	}
 
 	const [send, receive] = crossfade;
@@ -81,6 +91,8 @@
 			)}"
 			out:send|global={{ key: marble_key }}
 		/>
+			<!-- on:outrostart={() => {$marble_animation_count += 1;
+			console.log(`fun, ${position}, ${$marble_animation_count}`)}} -->
 		<!-- on:outroend={() => console.log('marble send', row, col, marble_key)} -->
 	{/if}
 	{#if next_marble}
@@ -90,6 +102,8 @@
 			)}"
 			in:receive|global={{ key: next_marble_key }}
 			on:introend={reorder_board}
-		/>
+			on:introstart={() => {$marble_animation_count += 1;
+			console.log(`fun, ${position}, ${$marble_animation_count}`)}}
+			/>
 	{/if}
 </button>
