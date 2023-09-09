@@ -6,6 +6,7 @@
 	import { show_win } from './utils/win-notification';
 	import { Player } from './turn_state_machine';
 	import type { Position } from './utils/position';
+	import { tick } from 'svelte';
 
 	export let position: Position;
 
@@ -51,9 +52,17 @@
 		$game = $game; // so that other subscribers to the store get notified
 	}
 
+	// i do not understand this
 	function reorder_board() {
-		$game.reorder_board();
-		$game = $game;
+		// with this it works always
+		setTimeout(() => {
+			$game.reorder_board();
+			$game = $game;
+		}, 1);
+
+		// this alone it does not
+		// $game.reorder_board();
+		// $game = $game;
 	}
 
 	const [send, receive] = crossfade;
@@ -67,7 +76,7 @@
 >
 	{#if marble}
 		<div
-			class="absolute bottom-0 left-0 right-0 top-0 z-20 h-16 w-16 rounded-full {cell_background(
+			class="absolute bottom-0 left-0 right-0 top-0 h-16 w-16 rounded-full {cell_background(
 				marble.state
 			)}"
 			out:send|global={{ key: marble_key }}
@@ -76,7 +85,7 @@
 	{/if}
 	{#if next_marble}
 		<div
-			class="absolute bottom-0 left-0 right-0 top-0 z-10 h-16 w-16 rounded-full {cell_background(
+			class="absolute bottom-0 left-0 right-0 top-0 h-16 w-16 rounded-full {cell_background(
 				next_marble.state
 			)}"
 			in:receive|global={{ key: next_marble_key }}
