@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Cell, Marble, OwnColors } from '$lib/index';
-	import { game, marble_animation_count } from '$lib/stores';
+	import { game } from '$lib/stores';
 	import { crossfade } from '$lib/crossfade';
 	import { show_notification } from './utils/notification';
 	import { show_win } from './utils/win-notification';
@@ -89,6 +89,6 @@
 			)}"
 			in:receive|global={{ key: next_marble_key }}
 			on:introend={reorder_board}
-			/>
+		/>
 	{/if}
 </button>

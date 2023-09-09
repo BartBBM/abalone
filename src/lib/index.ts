@@ -178,8 +178,8 @@ export class Game {
 		this.initialize_start_formation();
 
 		// testing purposes
-		this._test_nearly_won();
-		// this._test_first_nearly_out();
+		// this._test_nearly_won();
+		this._test_first_nearly_out();
 		// this._bug_test();
 	}
 
