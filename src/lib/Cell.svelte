@@ -52,26 +52,11 @@
 		$game = $game; // so that other subscribers to the store get notified
 	}
 
-	// i do not understand this
 	function reorder_board() {
-		// with this it works always
-		// setTimeout(() => {
-		// 	$game.reorder_board();
-		// 	$game = $game;
-		// }, 1);
-
-		// this alone it does not, even blinks shortly
-		// $game.reorder_board();
-		// $game = $game;
-
-
-		// new technique
 		$marble_animation_count -= 1;
-		console.log($marble_animation_count)
 		if ($marble_animation_count == 0) {
 			$game.reorder_board();
 			$game = $game;
-			console.log("yesssss")
 		}
 	}
 
@@ -91,9 +76,6 @@
 			)}"
 			out:send|global={{ key: marble_key }}
 		/>
-			<!-- on:outrostart={() => {$marble_animation_count += 1;
-			console.log(`fun, ${position}, ${$marble_animation_count}`)}} -->
-		<!-- on:outroend={() => console.log('marble send', row, col, marble_key)} -->
 	{/if}
 	{#if next_marble}
 		<div
@@ -102,8 +84,7 @@
 			)}"
 			in:receive|global={{ key: next_marble_key }}
 			on:introend={reorder_board}
-			on:introstart={() => {$marble_animation_count += 1;
-			console.log(`fun, ${position}, ${$marble_animation_count}`)}}
+			on:introstart={() => $marble_animation_count += 1 }
 			/>
 	{/if}
 </button>
