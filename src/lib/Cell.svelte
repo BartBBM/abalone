@@ -52,12 +52,17 @@
 		$game = $game; // so that other subscribers to the store get notified
 	}
 
+	// i do not understand this
 	function reorder_board() {
-		$marble_animation_count -= 1;
-		if ($marble_animation_count == 0) {
+		// with this it works always
+		setTimeout(() => {
 			$game.reorder_board();
 			$game = $game;
-		}
+		}, 1);
+
+		// this alone it does not, even blinks shortly
+		// $game.reorder_board();
+		// $game = $game;
 	}
 
 	const [send, receive] = crossfade;
@@ -84,7 +89,6 @@
 			)}"
 			in:receive|global={{ key: next_marble_key }}
 			on:introend={reorder_board}
-			on:introstart={() => $marble_animation_count += 1 }
 			/>
 	{/if}
 </button>
