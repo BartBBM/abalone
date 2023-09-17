@@ -1,4 +1,4 @@
-import type { Cell } from '$lib';
+import type { Cell, Game } from '$lib';
 
 export enum Player {
 	White = 'white',
@@ -37,16 +37,21 @@ export class Turn {
 		};
 	}
 
-	update_from_json(update: any) {
+	update_from_json(update: any, game: Game) {
 		this.turn_state = update.turn_state;
 		this.active_player = update.active_player;
-		// what happens when no element in selected cells
-		for (let index in this.selected_cells) {
-			let i = parseInt(index);
-			this.selected_cells[i].update_from_json(update.selected_cells[i]);
+
+		if (update.selected_cells === null) {
+			this.selected_cells = null;
+			return;
 		}
-		// TODO use map
-		// this.selected_cells = update.selected_cells?.map((c) => c.update_from_json(c));
+		this.selected_cells = [];
+
+		// what happens when no element in selected cells
+		for (let index in update.selected_cells) {
+			let i = parseInt(index);
+			this.selected_cells.push(game.find_cell_by_id(update.selected_cells[i].cell_id));
+		}
 	}
 
 	transition(event: TurnEvent, selected_cells: Cell[] | null) {

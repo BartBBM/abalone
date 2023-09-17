@@ -24,8 +24,11 @@ export async function POST({ request, cookies, route }) {
 	game.update_from_json(json_game_info);
 	game.action(position.row, position.col);
 
-	const updated_json_game_info = JSON.stringify(game.to_jsonable_object());
-	await update_game(game_uuid, updated_json_game_info); // does not have to be awaited
+	// reorder_board() gets called by server and by client individually
+	const updated_json_game_info_for_client = JSON.stringify(game.to_jsonable_object());
 
-	return json({ updated_json_game_info }, { status: 201 });
+	game.reorder_board();
+	await update_game(game_uuid, JSON.stringify(game.to_jsonable_object())); // does not have to be awaited
+
+	return json({ updated_json_game_info: updated_json_game_info_for_client }, { status: 201 });
 }

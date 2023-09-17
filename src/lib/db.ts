@@ -24,17 +24,13 @@ db.run(`
 // });
 
 export async function new_game(uuid: string, json_game_info: string) {
-	db.run(
-		'INSERT INTO games (uuid, data) VALUES (?, ?)',
-		[uuid, JSON.stringify(json_game_info)],
-		(err) => {
-			if (err) {
-				console.error(err.message);
-			} else {
-				console.log(`New game successfully created with uuid: ${uuid}`);
-			}
+	db.run('INSERT INTO games (uuid, data) VALUES (?, ?)', [uuid, json_game_info], (err) => {
+		if (err) {
+			console.error(err.message);
+		} else {
+			console.log(`New game successfully created with uuid: ${uuid}`);
 		}
-	);
+	});
 }
 
 export async function get_game_info(uuid: string): Promise<string | null> {

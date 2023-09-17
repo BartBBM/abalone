@@ -32,6 +32,9 @@ export class Cell {
 	next_marble: Marble | null = null;
 	is_selected: boolean = false;
 	is_selectable: boolean = false;
+	cell_id: number = 0; // first on the board will have 0 counting up - TODO, not implemented yet: first on outs will have -1 counting down
+
+	// adjacents
 	tl: Cell | null = null;
 	tr: Cell | null = null;
 	left: Cell | null = null;
@@ -56,7 +59,8 @@ export class Cell {
 			marble: this.marble,
 			next_marble: this.next_marble,
 			is_selected: this.is_selected,
-			is_selectable: this.is_selectable
+			is_selectable: this.is_selectable,
+			cell_id: this.cell_id
 		};
 	}
 
@@ -65,6 +69,7 @@ export class Cell {
 		this.next_marble = update.next_marble;
 		this.is_selected = update.is_selected;
 		this.is_selectable = update.is_selectable;
+		this.cell_id = update.cell_id;
 	}
 }
 
@@ -204,6 +209,7 @@ export class Game {
 	private create_board(): Cell[][] {
 		// initialize cells
 		let board: Cell[][] = [];
+		let cell_id_counter = 0;
 		board.push(create_row(5));
 		board.push(create_row(6));
 		board.push(create_row(7));
@@ -218,6 +224,7 @@ export class Game {
 			const rowArray: Cell[] = [];
 			for (let col = 0; col < length; col++) {
 				rowArray.push(new Cell());
+				rowArray[col].cell_id = cell_id_counter++;
 			}
 			return rowArray;
 		}
@@ -361,197 +368,6 @@ export class Game {
 		this.board[6][4].marble = generate_marble(Player.White);
 		this.board[7].forEach((v) => (v.marble = generate_marble(Player.White)));
 		this.board[8].forEach((v) => (v.marble = generate_marble(Player.White)));
-	}
-
-	private _test_nearly_won() {
-		this.action(8, 2);
-		this.reorder_board();
-		this.action(6, 4);
-		this.reorder_board();
-		this.action(5, 5);
-		this.reorder_board();
-		this.action(0, 3);
-		this.reorder_board();
-		this.action(1, 4);
-		this.reorder_board();
-		this.action(2, 5);
-		this.reorder_board();
-		this.action(0, 4);
-		this.reorder_board();
-		this.action(7, 3);
-		this.reorder_board();
-		this.action(5, 5);
-		this.reorder_board();
-		this.action(4, 6);
-		this.reorder_board();
-		this.action(0, 4);
-		this.reorder_board();
-		this.action(1, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(8, 3);
-		this.reorder_board();
-		this.action(7, 4);
-		this.reorder_board();
-		this.action(6, 5);
-		this.reorder_board();
-		this.action(1, 4);
-		this.reorder_board();
-		this.action(2, 5);
-		this.reorder_board();
-		this.action(3, 6);
-		this.reorder_board();
-		this.action(6, 4);
-		this.reorder_board();
-		this.action(4, 6);
-		this.reorder_board();
-		this.action(3, 6);
-		this.reorder_board();
-		this.action(1, 2);
-		this.reorder_board();
-		this.action(1, 3);
-		this.reorder_board();
-		this.action(1, 4);
-		this.reorder_board();
-		this.action(5, 5);
-		this.reorder_board();
-		this.action(3, 6);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(0, 2);
-		this.reorder_board();
-		this.action(0, 3);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(4, 6);
-		this.reorder_board();
-		this.action(5, 5);
-		this.reorder_board();
-		this.action(1, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(5, 5);
-		this.reorder_board();
-		this.action(3, 6);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(2, 4);
-		this.reorder_board();
-		this.action(2, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(4, 6);
-		this.reorder_board();
-		this.action(3, 6);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(2, 5);
-		this.reorder_board();
-		this.action(1, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(3, 6);
-		this.reorder_board();
-		this.action(4, 6);
-		this.reorder_board();
-		this.action(1, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		// this would win
-		// this.action(4, 6);
-		// this.action(3, 6);
-		// this.action(2, 6);
-	}
-
-	private _test_first_nearly_out() {
-		this.action(8, 4);
-		this.reorder_board();
-		this.action(7, 5);
-		this.reorder_board();
-		this.action(6, 6);
-		this.reorder_board();
-		this.action(0, 4);
-		this.reorder_board();
-		this.action(1, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(7, 5);
-		this.reorder_board();
-		this.action(6, 6);
-		this.reorder_board();
-		this.action(5, 7);
-		this.reorder_board();
-		this.action(1, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(3, 7);
-		this.reorder_board();
-		this.action(6, 6);
-		this.reorder_board();
-		this.action(5, 7);
-		this.reorder_board();
-		this.action(4, 8);
-		this.reorder_board();
-		// next would push first out
-		// this.action(2, 6);
-		// this.action(3, 7);
-		// this.action(4, 8);
-	}
-
-	private _bug_test() {
-		this.action(8, 2);
-		this.reorder_board();
-		this.action(6, 4);
-		this.reorder_board();
-		this.action(5, 5);
-		this.reorder_board();
-		this.action(0, 3);
-		this.reorder_board();
-		this.action(1, 4);
-		this.reorder_board();
-		this.action(2, 5);
-		this.reorder_board();
-		this.action(0, 4);
-		this.reorder_board();
-		this.action(7, 3);
-		this.reorder_board();
-		this.action(5, 5);
-		this.reorder_board();
-		this.action(4, 6);
-		this.reorder_board();
-		this.action(0, 4);
-		this.reorder_board();
-		this.action(1, 5);
-		this.reorder_board();
-		this.action(2, 6);
-		this.reorder_board();
-		this.action(8, 3);
-		this.reorder_board();
-		this.action(7, 4);
-		this.reorder_board();
-		this.action(6, 5);
-		this.reorder_board();
-		this.action(1, 4);
-		this.reorder_board();
-		this.action(2, 5);
-		this.reorder_board();
-		this.action(3, 6);
-		this.reorder_board();
-		this.action(6, 4);
-		this.reorder_board();
-		this.action(4, 6);
-		this.reorder_board();
 	}
 
 	private deep_copy_of_board(): Cell[][] {
@@ -731,12 +547,25 @@ export class Game {
 				this.board[i][j].update_from_json(parsed_game_info.board[i][j]);
 			}
 		}
-		this.turn.update_from_json(parsed_game_info.turn);
+		this.turn.update_from_json(parsed_game_info.turn, this);
 
-		for (let index in this.outs) {
+		this.outs = [];
+		for (let index in parsed_game_info.outs) {
 			let i = parseInt(index);
+			this.outs.push(new Cell());
 			this.outs[i].update_from_json(parsed_game_info.outs[i]);
 		}
+	}
+
+	find_cell_by_id(cell_id: number): Cell {
+		if (cell_id < 0) {
+			throw Error('not impl yet');
+		}
+		const cell = this.board.flat().find((v) => {
+			return v.cell_id === cell_id;
+		});
+		if (cell === undefined) throw Error('find impl is not correct');
+		return cell;
 	}
 }
 
