@@ -1,11 +1,17 @@
 import { Game } from '$lib';
+import { CLIENT_UUID } from '$lib/cookies';
 import { get_game_info, update_game } from '$lib/db.js';
+import {
+	get_sse_stream,
+	send_sse_update_to_every_other_client_ingame,
+	to_sse_string
+} from '$lib/server/server-sent-event-streams';
 import type { GridPosition } from '$lib/utils/position.js';
 import { fail, json } from '@sveltejs/kit';
 
 export async function POST({ request, cookies, route }) {
-	// console.log(route.id);
-	// console.log(request.url);
+	const client_uuid = cookies.get(CLIENT_UUID);
+	if (!client_uuid) throw Error('impl is wrong');
 	const game_uuid = request.url.split('/').pop();
 	console.log(`POST for game: ${game_uuid}`);
 	if (game_uuid == undefined)
@@ -29,6 +35,12 @@ export async function POST({ request, cookies, route }) {
 
 	game.reorder_board();
 	await update_game(game_uuid, JSON.stringify(game.to_jsonable_object())); // does not have to be awaited
+
+	send_sse_update_to_every_other_client_ingame(
+		game_uuid,
+		client_uuid,
+		updated_json_game_info_for_client
+	);
 
 	return json({ updated_json_game_info: updated_json_game_info_for_client }, { status: 201 });
 }
