@@ -29,6 +29,26 @@ export class Turn {
 	active_player: Player = Player.White;
 	selected_cells: Cell[] | null = null;
 
+	to_jsonable_object() {
+		return {
+			turn_state: this.turn_state,
+			active_player: this.active_player,
+			selected_cells: this.selected_cells?.map((c) => c.to_jsonable_object())
+		};
+	}
+
+	update_from_json(update: any) {
+		this.turn_state = update.turn_state;
+		this.active_player = update.active_player;
+		// what happens when no element in selected cells
+		for (let index in this.selected_cells) {
+			let i = parseInt(index);
+			this.selected_cells[i].update_from_json(update.selected_cells[i]);
+		}
+		// TODO use map
+		// this.selected_cells = update.selected_cells?.map((c) => c.update_from_json(c));
+	}
+
 	transition(event: TurnEvent, selected_cells: Cell[] | null) {
 		this.selected_cells = selected_cells;
 		switch (this.turn_state) {

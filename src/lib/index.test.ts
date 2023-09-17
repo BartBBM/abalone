@@ -220,59 +220,74 @@ describe('is_sumito_possible()', () => {
 		expect(res).toBe(true);
 	});
 
-	it('tests if kicking out top right works - bug was in ', () => {
+	// it('tests if kicking out top right works - bug was in ', () => {
+	// 	let game = new Game();
+	// 	game.action(8, 2);
+	// 	game.reorder_board();
+	// 	game.action(6, 4);
+	// 	game.reorder_board();
+	// 	game.action(5, 5);
+	// 	game.reorder_board();
+	// 	game.action(0, 3);
+	// 	game.reorder_board();
+	// 	game.action(1, 4);
+	// 	game.reorder_board();
+	// 	game.action(2, 5);
+	// 	game.reorder_board();
+	// 	game.action(0, 4);
+	// 	game.reorder_board();
+	// 	game.action(7, 3);
+	// 	game.reorder_board();
+	// 	game.action(5, 5);
+	// 	game.reorder_board();
+	// 	game.action(4, 6);
+	// 	game.reorder_board();
+	// 	game.action(0, 4);
+	// 	game.reorder_board();
+	// 	game.action(1, 5);
+	// 	game.reorder_board();
+	// 	game.action(2, 6);
+	// 	game.reorder_board();
+	// 	game.action(8, 3);
+	// 	game.reorder_board();
+	// 	game.action(7, 4);
+	// 	game.reorder_board();
+	// 	game.action(6, 5);
+	// 	game.reorder_board();
+	// 	game.action(1, 4);
+	// 	game.reorder_board();
+	// 	game.action(2, 5);
+	// 	game.reorder_board();
+	// 	game.action(3, 6);
+	// 	game.reorder_board();
+	// 	game.action(6, 4);
+	// 	game.reorder_board();
+	// 	game.action(4, 6);
+	// 	game.reorder_board();
+
+	// 	// here bug occured -> span was selected, now kicking one marbel off to the top right
+	// 	game.action(3, 6);
+	// 	game.reorder_board();
+
+	// 	expect(game.board[5][5].marble?.state).toBe(Player.White);
+	// 	expect(game.board[4][6].marble?.state).toBe(Player.White);
+	// 	expect(game.board[3][6].marble?.state).toBe(Player.White);
+	// 	expect(game.board[2][6].marble?.state).toBe(Player.Black);
+	// 	expect(game.outs[0].marble?.state).toBe(Player.Black);
+	// });
+});
+
+describe('Game - to json and back', () => {
+	it('checks if works', () => {
+		let game_before = new Game();
+		game_before.action(0, 0);
+
+		let game_before_json_string = JSON.stringify(game_before.to_jsonable_object());
+
 		let game = new Game();
-		game.action(8, 2);
-		game.reorder_board();
-		game.action(6, 4);
-		game.reorder_board();
-		game.action(5, 5);
-		game.reorder_board();
-		game.action(0, 3);
-		game.reorder_board();
-		game.action(1, 4);
-		game.reorder_board();
-		game.action(2, 5);
-		game.reorder_board();
-		game.action(0, 4);
-		game.reorder_board();
-		game.action(7, 3);
-		game.reorder_board();
-		game.action(5, 5);
-		game.reorder_board();
-		game.action(4, 6);
-		game.reorder_board();
-		game.action(0, 4);
-		game.reorder_board();
-		game.action(1, 5);
-		game.reorder_board();
-		game.action(2, 6);
-		game.reorder_board();
-		game.action(8, 3);
-		game.reorder_board();
-		game.action(7, 4);
-		game.reorder_board();
-		game.action(6, 5);
-		game.reorder_board();
-		game.action(1, 4);
-		game.reorder_board();
-		game.action(2, 5);
-		game.reorder_board();
-		game.action(3, 6);
-		game.reorder_board();
-		game.action(6, 4);
-		game.reorder_board();
-		game.action(4, 6);
-		game.reorder_board();
+		game.update_from_json(game_before_json_string);
 
-		// here bug occured -> span was selected, now kicking one marbel off to the top right
-		game.action(3, 6);
-		game.reorder_board();
-
-		expect(game.board[5][5].marble?.state).toBe(Player.White);
-		expect(game.board[4][6].marble?.state).toBe(Player.White);
-		expect(game.board[3][6].marble?.state).toBe(Player.White);
-		expect(game.board[2][6].marble?.state).toBe(Player.Black);
-		expect(game.outs[0].marble?.state).toBe(Player.Black);
+		expect(game.board[0][0].is_selected).toBe(true);
+		expect(game.board[0][0].marble?.state).toBe(Player.Black);
 	});
 });

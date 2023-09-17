@@ -1,4 +1,6 @@
+import { json } from '@sveltejs/kit';
 import { Player, Turn, TurnEvent, TurnState } from './turn_state_machine';
+import { parse } from 'svelte/compiler';
 
 export enum OwnColors {
 	White = 'bg-fuchsia-800',
@@ -47,6 +49,22 @@ export class Cell {
 			if (this.get_adjacents().includes(v) == true) result = true;
 		});
 		return result;
+	}
+
+	to_jsonable_object() {
+		return {
+			marble: this.marble,
+			next_marble: this.next_marble,
+			is_selected: this.is_selected,
+			is_selectable: this.is_selectable
+		};
+	}
+
+	update_from_json(update: any) {
+		this.marble = update.marble;
+		this.next_marble = update.next_marble;
+		this.is_selected = update.is_selected;
+		this.is_selectable = update.is_selectable;
 	}
 }
 
@@ -179,7 +197,7 @@ export class Game {
 
 		// testing purposes
 		// this._test_nearly_won();
-		this._test_first_nearly_out();
+		// this._test_first_nearly_out();
 		// this._bug_test();
 	}
 
@@ -689,6 +707,35 @@ export class Game {
 				v.get_adjacents()[direction_of_move]!.next_marble = v.marble;
 				v.marble = null;
 			});
+		}
+	}
+
+	to_jsonable_object() {
+		return {
+			board: this.board.map((row) => row.map((cell) => cell.to_jsonable_object())),
+			turn: this.turn.to_jsonable_object(),
+			outs: this.outs.map((cell) => cell.to_jsonable_object())
+		};
+	}
+
+	// string needs to be already parsed as JSON
+	update_from_json(json_game_info: any) {
+		// let parsed_game_info = JSON.parse(json_game_info);
+		let parsed_game_info: any = json_game_info;
+		// console.log(parsed_game_info);
+		// TODO use map
+		for (let index in this.board) {
+			let i = parseInt(index);
+			for (let twindex in this.board[i]) {
+				let j = parseInt(twindex);
+				this.board[i][j].update_from_json(parsed_game_info.board[i][j]);
+			}
+		}
+		this.turn.update_from_json(parsed_game_info.turn);
+
+		for (let index in this.outs) {
+			let i = parseInt(index);
+			this.outs[i].update_from_json(parsed_game_info.outs[i]);
 		}
 	}
 }
