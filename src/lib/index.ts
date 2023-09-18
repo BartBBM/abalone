@@ -1,6 +1,4 @@
-import { json } from '@sveltejs/kit';
 import { Player, Turn, TurnEvent, TurnState } from './turn_state_machine';
-import { parse } from 'svelte/compiler';
 
 export enum OwnColors {
 	White = 'bg-fuchsia-800',
