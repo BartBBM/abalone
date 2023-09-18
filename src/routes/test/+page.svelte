@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { Cell, CellState } from '$lib';
 	import Cell_Component from '$lib/Cell.svelte';
 
@@ -34,7 +34,7 @@
 	{/each}
 </div>
 
-<button on:click={change}>Press</button>
+<button on:click={change}>Press</button> -->
 
 <!-- <script lang="ts">
 	import Cell_Component from '$lib/Cell.svelte';
