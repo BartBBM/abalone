@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Cell, Game, OwnColors } from '$lib/index';
-	import Cell_Component from '$lib/online/OnlineCell.svelte';
+	import Cell_Component from '$lib/components/online/OnlineCell.svelte';
 	import { game, win_animation } from '$lib/stores';
-	import WinAnimation from '../WinAnimation.svelte';
-	import { Player } from '../turn_state_machine';
+	import WinAnimation from '$lib/components/WinAnimation.svelte';
+	import { Player } from '$lib/turn_state_machine';
 	import { fade } from 'svelte/transition';
 </script>
 

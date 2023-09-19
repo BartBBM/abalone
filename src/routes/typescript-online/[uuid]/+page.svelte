@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import OnlineGame from '$lib/online/OnlineGame.svelte';
+	import OnlineGame from '$lib/components/online/OnlineGame.svelte';
 	import { game } from '$lib/stores.js';
 	import { onMount } from 'svelte';
 

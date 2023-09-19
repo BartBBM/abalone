@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { Cell, Marble, OwnColors } from '$lib/index';
 	import { game } from '$lib/stores';
-	import { crossfade } from '$lib/crossfade';
+	import { crossfade } from '$lib/utils/crossfade';
 	import { show_notification } from '../utils/notification';
 	import { show_win } from '../utils/win-notification';
 	import { Player } from '../turn_state_machine';
 	import type { Position } from '../utils/position';
+	import { tick } from 'svelte';
 
 	export let position: Position;
 
@@ -37,28 +38,12 @@
 		return '';
 	}
 
-	async function toggle_selected() {
+	function toggle_selected() {
 		try {
 			if (typeof position === 'number') return;
 			console.info(`this.action(${position.row}, ${position.col});`);
-
-			// make post request
-
-			const response = await fetch('', {
-				method: 'POST',
-				body: JSON.stringify({ position }),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			const json_body = await response.json();
-			// console.log(json_body);
-			const json_game_info = json_body.updated_json_game_info;
-			// console.log(json_game_info);
-			$game.update_from_json(JSON.parse(json_game_info));
-
-			// let player = $game.action(position.row, position.col);
-			// if (player != undefined) show_win(player);
+			let player = $game.action(position.row, position.col);
+			if (player != undefined) show_win(player);
 		} catch (error) {
 			console.log(error);
 			show_notification((error as Error).message);

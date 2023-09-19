@@ -1,4 +1,4 @@
-import { CLIENT_UUID } from '$lib/cookies';
+import { CLIENT_UUID } from '$lib/utils/cookies';
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ cookies }) => {

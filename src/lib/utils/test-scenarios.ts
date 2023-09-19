@@ -146,7 +146,7 @@ export function _test_first_nearly_out(game: Game) {
 	// game.action(4, 8);
 }
 
-export function _bug_test(game: Game) {
+export function _bug_test_kicking_a_cell_out(game: Game) {
 	game.action(8, 2);
 	game.reorder_board();
 	game.action(6, 4);
@@ -189,4 +189,40 @@ export function _bug_test(game: Game) {
 	game.reorder_board();
 	game.action(4, 6);
 	game.reorder_board();
+}
+
+export function _bug_test_should_not_be_possible_for_a_cell_to_be_selectable_behind_an_enemy_marble(
+	game: Game
+) {
+	game.action(8, 4);
+	game.reorder_board();
+	game.action(6, 4);
+	game.reorder_board();
+	game.action(5, 4);
+	game.reorder_board();
+	game.action(0, 0);
+	game.reorder_board();
+	game.action(2, 2);
+	game.reorder_board();
+	game.action(3, 3);
+	game.reorder_board();
+	game.action(7, 4);
+	game.reorder_board();
+	game.action(5, 4);
+	game.reorder_board();
+	game.action(4, 4);
+	game.reorder_board();
+	game.action(3, 3);
+	game.reorder_board();
+	game.action(3, 4);
+	game.reorder_board();
+	game.action(4, 4);
+	game.reorder_board();
+	game.action(3, 3);
+	game.reorder_board();
+	game.action(3, 4);
+	game.reorder_board();
+	game.action(4, 4);
+	game.reorder_board();
+	// this.action(5, 4);
 }

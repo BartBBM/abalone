@@ -2,6 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { Game } from '$lib/index';
 import * as Index from '$lib/index';
 import { Player } from './turn_state_machine';
+import {
+	_bug_test_kicking_a_cell_out,
+	_bug_test_should_not_be_possible_for_a_cell_to_be_selectable_behind_an_enemy_marble
+} from './utils/test-scenarios';
 
 // describe('finding out how stuff works', () => {
 // 	it('how includes() works', () => {
@@ -222,48 +226,7 @@ describe('is_sumito_possible()', () => {
 
 	it('tests if kicking out top right works - bug was in ', () => {
 		let game = new Game();
-		game.action(8, 2);
-		game.reorder_board();
-		game.action(6, 4);
-		game.reorder_board();
-		game.action(5, 5);
-		game.reorder_board();
-		game.action(0, 3);
-		game.reorder_board();
-		game.action(1, 4);
-		game.reorder_board();
-		game.action(2, 5);
-		game.reorder_board();
-		game.action(0, 4);
-		game.reorder_board();
-		game.action(7, 3);
-		game.reorder_board();
-		game.action(5, 5);
-		game.reorder_board();
-		game.action(4, 6);
-		game.reorder_board();
-		game.action(0, 4);
-		game.reorder_board();
-		game.action(1, 5);
-		game.reorder_board();
-		game.action(2, 6);
-		game.reorder_board();
-		game.action(8, 3);
-		game.reorder_board();
-		game.action(7, 4);
-		game.reorder_board();
-		game.action(6, 5);
-		game.reorder_board();
-		game.action(1, 4);
-		game.reorder_board();
-		game.action(2, 5);
-		game.reorder_board();
-		game.action(3, 6);
-		game.reorder_board();
-		game.action(6, 4);
-		game.reorder_board();
-		game.action(4, 6);
-		game.reorder_board();
+		_bug_test_kicking_a_cell_out(game);
 
 		// here bug occured -> span was selected, now kicking one marbel off to the top right
 		game.action(3, 6);
@@ -289,5 +252,20 @@ describe('Game - to json and back', () => {
 
 		expect(game.board[0][0].is_selected).toBe(true);
 		expect(game.board[0][0].marble?.state).toBe(Player.Black);
+	});
+});
+
+describe('Bug - selectable for single cell', () => {
+	it('should not be possible for a cell to be selectable behind an enemy marble', () => {
+		let game = new Game();
+		_bug_test_should_not_be_possible_for_a_cell_to_be_selectable_behind_an_enemy_marble(game);
+
+		// here bug occured -> span was selected, now kicking one marbel off to the top right
+		game.action(5, 4);
+		game.reorder_board();
+
+		expect(game.board[5][4].is_selected).toBe(true);
+		expect(game.board[3][3].is_selectable).toBe(false);
+		expect(game.board[6][4].is_selectable).toBe(true);
 	});
 });

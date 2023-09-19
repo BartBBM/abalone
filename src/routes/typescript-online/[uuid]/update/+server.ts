@@ -1,4 +1,4 @@
-import { CLIENT_UUID } from '$lib/cookies';
+import { CLIENT_UUID } from '$lib/utils/cookies';
 import {
 	get_sse_stream,
 	remove_sse_stream,

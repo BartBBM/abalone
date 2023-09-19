@@ -1,5 +1,5 @@
 import { Game } from '$lib';
-import { CLIENT_UUID } from '$lib/cookies';
+import { CLIENT_UUID } from '$lib/utils/cookies';
 import { get_game_info, update_game } from '$lib/db.js';
 import {
 	get_sse_stream,

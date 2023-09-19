@@ -1,4 +1,4 @@
-import { _bug_test } from './test-scenarios';
+import { _bug_test_kicking_a_cell_out } from './utils/test-scenarios';
 import { Player, Turn, TurnEvent, TurnState } from './turn_state_machine';
 
 export enum OwnColors {

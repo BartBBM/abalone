@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { Player } from './turn_state_machine';
-	import { win_animation } from './stores';
+	import { Player } from '$lib/turn_state_machine';
+	import { win_animation } from '$lib/stores';
 
 	// from https://svelte.dev/tutorial/congratulations
 	import { onMount } from 'svelte';
