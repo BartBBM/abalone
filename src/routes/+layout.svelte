@@ -9,7 +9,7 @@
 	<a href="/how-to-play" class="mx-8">How to play</a>
 	<a href="/typescript-local" class="mx-8">Typescript local</a>
 	<a href="/typescript-online" class="mx-8">Typescript online</a>
-	<a href="/rust-online" class="mx-8">Rust online</a>
+	<!-- <a href="/rust-online" class="mx-8">Rust online</a> -->
 </nav>
 <slot />
 

@@ -9,7 +9,7 @@
 		<Link href="https://cdn.1j1ju.com/medias/c2/b0/3a-abalone-rulebook.pdf">to read them</Link>.
 	</p>
 	<p>
-		Anyway, the main point is that you and your opponent have marbles and you want to kick the
-		marbles of your opponent off the game board. First to 5 wins.
+		Anyway, the main point is that you and your opponent have marbles and you want to kick your
+		opponents marbles off the game board. First to 5 wins.
 	</p>
 </section>
