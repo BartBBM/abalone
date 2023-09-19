@@ -41,7 +41,8 @@
 
 	async function toggle_selected() {
 		try {
-			if ($chosen_player && $chosen_player !== $game.turn.active_player) return;
+			if ($chosen_player && $chosen_player !== $game.turn.active_player)
+				throw Error("It's not your turn!");
 			if (typeof position === 'number') return;
 			console.info(`this.action(${position.row}, ${position.col});`);
 
