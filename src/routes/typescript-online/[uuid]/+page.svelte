@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import OnlineGame from '$lib/components/online/OnlineGame.svelte';
+	import Game from '$lib/components/Game.svelte';
 	import { chosen_player, game } from '$lib/stores.js';
 	import { Player } from '$lib/turn_state_machine.js';
 	import { OwnColors } from '$lib/utils/colors.js';
@@ -28,12 +28,10 @@
 			eventSource.close();
 		};
 	});
-
-	$chosen_player = null; // if set before, reset
 </script>
 
 {#if $chosen_player}
-	<OnlineGame />
+	<Game />
 {:else}
 	<section class="flex justify-center gap-8">
 		<button

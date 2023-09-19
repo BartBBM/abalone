@@ -25,4 +25,4 @@ export const win_animation: Writable<WinAnimation> = writable({
 	player: Player.White
 });
 
-export const chosen_player: Writable<Player | null> = writable(null);
+export const chosen_player: Writable<Player | null> = writable(null); // also indicates wheter game is online or not
