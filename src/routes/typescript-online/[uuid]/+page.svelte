@@ -32,8 +32,6 @@
 	$chosen_player = null; // if set before, reset
 </script>
 
-<!-- <h1 class="my-8 text-center font-bold">Choose Player not yet implemented</h1> -->
-
 {#if $chosen_player}
 	<OnlineGame />
 {:else}

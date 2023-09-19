@@ -23,14 +23,19 @@
 		to create a visual representation while the logic is programmed in various ways.
 	</p>
 	<p class="my-4">
-		To this point in time only
-		<Link href="typescript-local">one version of the game exists</Link>
-		where the game state is kept in the browser, programmed with
+		For the <Link href="typescript-local">simplest version</Link> the state is kept in the browser, all
+		being programmed in
 		<a
 			class="text-blue-500 underline underline-offset-2 hover:text-blue-400 hover:drop-shadow-[2px_2px_1px_rgba(59,130,246,0.2)]"
 			href="https://www.typescriptlang.org/"
 			target="_blank"
 			rel="noopener noreferrer">TypeScript</a
-		>.
+		>. This version allows you to play Abalone locally without the need for a constant internet
+		connection.
 	</p>
+	<p class="my-4">
+		To play together with your friends, use <Link href="typescript-online">Typescript online</Link>
+		where the state is kept on the server in a simple sqlite database.
+	</p>
+	<p class="my-4">This project is hostet with Cloud Run from Google Cloud.</p>
 </section>
