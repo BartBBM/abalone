@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Cell, Marble, OwnColors } from '$lib/index';
-	import { game } from '$lib/stores';
+	import type { Cell, Marble } from '$lib/index';
+	import { chosen_player, game } from '$lib/stores';
 	import { crossfade } from '$lib/utils/crossfade';
 	import { show_notification } from '$lib/utils/notification';
 	import { show_win } from '$lib/utils/win-notification';
 	import { Player } from '$lib/turn_state_machine';
 	import type { Position } from '$lib/utils/position';
+	import { OwnColors } from '$lib/utils/colors';
 
 	export let position: Position;
 
@@ -39,6 +40,7 @@
 
 	async function toggle_selected() {
 		try {
+			if ($chosen_player !== $game.turn.active_player) return;
 			if (typeof position === 'number') return;
 			console.info(`this.action(${position.row}, ${position.col});`);
 

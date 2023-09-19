@@ -5,6 +5,10 @@ export enum Player {
 	Black = 'black'
 }
 
+export function other_player(player: Player): Player {
+	return player === Player.White ? Player.Black : Player.White;
+}
+
 export enum TurnState {
 	no_or_other_cell_selected,
 	own_cell_selected,
@@ -28,11 +32,13 @@ export class Turn {
 	private turn_state: TurnState = TurnState.no_or_other_cell_selected;
 	active_player: Player = Player.White;
 	selected_cells: Cell[] | null = null;
+	other_player_has_won: boolean = false;
 
 	to_jsonable_object() {
 		return {
 			turn_state: this.turn_state,
 			active_player: this.active_player,
+			other_player_has_won: this.other_player_has_won,
 			selected_cells: this.selected_cells?.map((c) => c.to_jsonable_object())
 		};
 	}
@@ -40,6 +46,7 @@ export class Turn {
 	update_from_json(update: any, game: Game) {
 		this.turn_state = update.turn_state;
 		this.active_player = update.active_player;
+		this.other_player_has_won = update.other_player_has_won;
 
 		if (update.selected_cells === null) {
 			this.selected_cells = null;

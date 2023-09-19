@@ -24,3 +24,5 @@ export const win_animation: Writable<WinAnimation> = writable({
 	is_visible: false,
 	player: Player.White
 });
+
+export const chosen_player: Writable<Player | null> = writable(null);

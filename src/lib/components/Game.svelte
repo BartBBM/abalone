@@ -1,10 +1,19 @@
 <script lang="ts">
-	import { Cell, Game, OwnColors } from '$lib/index';
+	import { Cell, Game } from '$lib/index';
 	import Cell_Component from '$lib/components/Cell.svelte';
 	import { game, win_animation } from '$lib/stores';
 	import WinAnimation from '$lib/components/WinAnimation.svelte';
-	import { Player } from '../turn_state_machine';
+	import { Player, other_player } from '../turn_state_machine';
 	import { fade } from 'svelte/transition';
+	import { show_win } from '$lib/utils/win-notification';
+	import { OwnColors } from '$lib/utils/colors';
+
+	$: {
+		if ($game.turn.other_player_has_won === true) {
+			show_win(other_player($game.turn.active_player));
+			$game.turn.other_player_has_won = false;
+		}
+	}
 </script>
 
 <!-- {@debug game} -->

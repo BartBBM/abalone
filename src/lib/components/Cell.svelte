@@ -42,8 +42,7 @@
 		try {
 			if (typeof position === 'number') return;
 			console.info(`this.action(${position.row}, ${position.col});`);
-			let player = $game.action(position.row, position.col);
-			if (player != undefined) show_win(player);
+			$game.action(position.row, position.col);
 		} catch (error) {
 			console.log(error);
 			show_notification((error as Error).message);

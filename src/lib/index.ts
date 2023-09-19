@@ -1,11 +1,6 @@
 import { _bug_test_kicking_a_cell_out } from './utils/test-scenarios';
 import { Player, Turn, TurnEvent, TurnState } from './turn_state_machine';
 
-export enum OwnColors {
-	White = 'bg-fuchsia-800',
-	Black = 'bg-teal-800'
-}
-
 export enum SpanLength {
 	One = 1,
 	Two,
@@ -78,11 +73,11 @@ export class Marble {
 }
 
 export class Game {
-	board: Cell[][]; // marbles all in marble, get shifted down from next_marble
+	board: Cell[][]; // all marbles are in marble, get shifted down from next_marble
 	turn: Turn = new Turn();
-	outs: Cell[] = []; // marbles all in next_marble
+	outs: Cell[] = []; // all marbles are in next_marble
 
-	action(row: number, col: number): Player | undefined {
+	action(row: number, col: number) {
 		const board_copy = this.deep_copy_of_board(); // cuz ts is not that great and has no deep_copy?
 
 		const pressed_cell = this.board[row][col];
@@ -163,7 +158,7 @@ export class Game {
 					this.span_move(this.turn.selected_cells!, pressed_cell);
 					pressed_cell.is_selected = !pressed_cell.is_selected;
 
-					if (this.check_if_won()) return this.turn.active_player;
+					if (this.check_if_won()) this.turn.other_player_has_won = true;
 
 					// toggel active player and next turn
 					this.turn.transition(TurnEvent.move_occured, null);
@@ -382,6 +377,9 @@ export class Game {
 		return board_copy;
 	}
 
+	// checks if current player has won and only if marbles which are out are exactly 5
+	// -> so that if wanted you can continue to play after the game has ended
+	// does not work that well, but it's fine
 	private check_if_won() {
 		let other_player_color = this.turn.active_player == Player.White ? Player.Black : Player.White;
 		let out_marbels_of_other_player = this.outs.reduce((count, cell) => {
