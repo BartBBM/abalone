@@ -16,7 +16,10 @@
 		}
 	}
 
-	onDestroy(() => ($chosen_player = null));
+	onDestroy(() => {
+		$chosen_player = null;
+		$game = new Game();
+	});
 </script>
 
 <!-- {@debug game} -->
