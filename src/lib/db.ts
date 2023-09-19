@@ -9,7 +9,8 @@ sqlite3.verbose();
 db.run(`
 	CREATE TABLE IF NOT EXISTS games (
 		uuid TEXT PRIMARY KEY,
-		data JSON
+		data JSON,
+		date_of_creation TEXT
 	)
 `);
 
@@ -22,13 +23,18 @@ db.run(`
 // });
 
 export async function new_game(uuid: string, json_game_info: string) {
-	db.run('INSERT INTO games (uuid, data) VALUES (?, ?)', [uuid, json_game_info], (err) => {
-		if (err) {
-			console.error(err.message);
-		} else {
-			console.log(`New game successfully created with uuid: ${uuid}`);
+	const date = new Date();
+	db.run(
+		'INSERT INTO games (uuid, data, date_of_creation) VALUES (?, ?, ?)',
+		[uuid, json_game_info, date.toISOString()],
+		(err) => {
+			if (err) {
+				console.error(err.message);
+			} else {
+				console.log(`New game successfully created with uuid: ${uuid}`);
+			}
 		}
-	});
+	);
 }
 
 export async function get_game_info(uuid: string): Promise<string | null> {
@@ -55,10 +61,10 @@ export async function get_game_info(uuid: string): Promise<string | null> {
 	return result;
 }
 
-export async function get_all_games(): Promise<string[]> {
+export async function get_all_game_uuids_sorted(): Promise<string[]> {
 	// TODO sort by date descending
 
-	const query = 'SELECT uuid FROM games';
+	const query = 'SELECT uuid FROM games ORDER BY date_of_creation DESC';
 
 	let results: string[] = await new Promise((resolve, reject) => {
 		db.all(query, [], (err, rows) => {

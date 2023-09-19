@@ -1,4 +1,4 @@
-import { get_all_games, get_game_info } from '$lib/db';
+import { get_all_game_uuids_sorted, get_game_info } from '$lib/db';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = ({ params }) => {
