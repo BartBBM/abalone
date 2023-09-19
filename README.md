@@ -1,8 +1,8 @@
 # Abalone
 
 ## Try it out
-https://try1-xm6btgq3aq-ey.a.run.app/typescript-online/a1271874-a660-443f-a28f-08d4375dac44
-If this link does not work your out of luck, unless you wanna clone this project and run:
+
+If [this link](https://try1-xm6btgq3aq-ey.a.run.app) does not work your out of luck, unless you wanna clone this project and run:
 ```
     pnpm install
     pnpm run dev

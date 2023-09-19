@@ -37,5 +37,9 @@
 		To play together with your friends, use <Link href="typescript-online">Typescript online</Link>
 		where the state is kept on the server in a simple sqlite database.
 	</p>
-	<p class="my-4">This project is hostet with Cloud Run from Google Cloud.</p>
+	<p class="my-4">
+		This project is hostet with Cloud Run from Google Cloud and its code can be found on <Link
+			href="https://github.com/BartBBM/abalone">Github</Link
+		>.
+	</p>
 </section>
