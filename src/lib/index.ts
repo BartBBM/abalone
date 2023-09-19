@@ -1,3 +1,4 @@
+import { _bug_test } from './test-scenarios';
 import { Player, Turn, TurnEvent, TurnState } from './turn_state_machine';
 
 export enum OwnColors {
@@ -201,7 +202,7 @@ export class Game {
 		// testing purposes
 		// this._test_nearly_won();
 		// this._test_first_nearly_out();
-		// this._bug_test();
+		// _bug_test(this);
 	}
 
 	private create_board(): Cell[][] {
@@ -442,6 +443,7 @@ export class Game {
 				if (v!.marble?.state !== opposite_color) v!.is_selectable = true;
 				if (
 					v.marble &&
+					v!.marble?.state !== opposite_color &&
 					v!.get_adjacents()[i]?.marble &&
 					v!.get_adjacents()[i]!.marble?.state === cell_color
 				)
