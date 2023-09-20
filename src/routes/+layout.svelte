@@ -4,7 +4,7 @@
 	import { fly } from 'svelte/transition';
 </script>
 
-<nav class="my-8 flex justify-center text-lg">
+<nav class="mb-8 mt-4 flex justify-center text-lg">
 	<a href="/" class="mx-8">Home</a>
 	<a href="/how-to-play" class="mx-8">How to play</a>
 	<a href="/typescript-local" class="mx-8">Typescript local</a>

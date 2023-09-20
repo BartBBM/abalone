@@ -1,4 +1,4 @@
 export enum OwnColors {
-	White = 'bg-fuchsia-800',
-	Black = 'bg-teal-800'
+	White = 'bg-pink-300',
+	Black = 'bg-emerald-400'
 }

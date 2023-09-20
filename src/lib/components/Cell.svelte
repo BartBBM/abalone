@@ -34,8 +34,10 @@
 	}
 
 	function cell_background(cell_state: Player): String {
-		if (cell_state == Player.White) return OwnColors.White;
-		if (cell_state == Player.Black) return OwnColors.Black;
+		// if (cell_state == Player.White) return OwnColors.White;
+		if (cell_state == Player.White) return 'bg-gradient-to-tl from-30% from-pink-400 to-pink-200';
+		if (cell_state == Player.Black)
+			return 'bg-gradient-to-tl from-30% from-emerald-500 to-emerald-200';
 		return '';
 	}
 

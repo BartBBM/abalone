@@ -1,4 +1,8 @@
-import { _bug_test_kicking_a_cell_out } from './utils/test-scenarios';
+import {
+	_bug_test_kicking_a_cell_out,
+	_test_first_nearly_out,
+	_test_nearly_won
+} from './utils/test-scenarios';
 import { Player, Turn, TurnEvent, TurnState } from './turn_state_machine';
 
 export enum SpanLength {
@@ -195,8 +199,8 @@ export class Game {
 		this.initialize_start_formation();
 
 		// testing purposes
-		// this._test_nearly_won();
-		// this._test_first_nearly_out();
+		// _test_nearly_won(this);
+		// _test_first_nearly_out(this);
 		// _bug_test(this);
 	}
 

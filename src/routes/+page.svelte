@@ -2,8 +2,11 @@
 	import Link from '$lib/Link.svelte';
 </script>
 
-<section class="mx-auto max-w-prose text-lg">
-	<h1 class="mb-4 text-center text-2xl font-medium text-fuchsia-600">Abalone</h1>
+<section class="mx-auto max-w-prose text-justify text-lg">
+	<!-- <h1 class="mb-4 text-center text-4xl font-medium tracking-wide text-fuchsia-600">Abalone</h1> -->
+	<h1 class="mb-4 text-center font-serif text-4xl font-medium tracking-wide text-fuchsia-600">
+		Abalone
+	</h1>
 	<p>
 		This is a project created by me - Meo - to try out creating a web app and getting my hands
 		dirty. This project uses
@@ -38,7 +41,7 @@
 		where the state is kept on the server in a simple sqlite database.
 	</p>
 	<p class="my-4">
-		This project is hostet with Cloud Run from Google Cloud and its code can be found on <Link
+		This project is hosted with Cloud Run from Google Cloud and its code can be found on <Link
 			href="https://github.com/BartBBM/abalone">Github</Link
 		>.
 	</p>
