@@ -11,14 +11,13 @@ If [this link](https://try1-xm6btgq3aq-ey.a.run.app) does not work your out of l
 ## Features which may be implemented
 - online rust as BE
 
-## Building
+## Docs
 
-To create a production version of your app:
+### State machine
+![State machine](docs/abalone-state-machine.svg)
+https://excalidraw.com/#json=6Las9ReGCRGorfTdfzd5Q,S-wy4zwe2W6hntF814-fWw
 
-```bash
-npm run build
-```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+### Multiplayer mode - Propagation of updates
+![Propagation of updates](docs/Multiplayer-mode-Propagation-of-updates.svg)
+https://excalidraw.com/#json=YEEecxkk1UItVkoSU0w91,ATbyxuop4MQwdUIPPpef3A
